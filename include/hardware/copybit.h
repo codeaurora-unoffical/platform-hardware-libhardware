@@ -60,7 +60,9 @@ enum {
     COPYBIT_TRANSFORM       = 4,
     /* blurs the copied bitmap. The amount of blurring cannot be changed 
      * at this time. */
-    COPYBIT_BLUR            = 5
+    COPYBIT_BLUR            = 5,
+    /* Keep the source rectangle, ignore clip */
+    COPYBIT_CROP_PRESCALED  = 6,
 };
 
 /* values for copybit_set_parameter(COPYBIT_TRANSFORM) */
