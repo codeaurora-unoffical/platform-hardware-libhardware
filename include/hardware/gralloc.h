@@ -308,6 +308,7 @@ typedef struct framebuffer_device_t {
      */
 
     int (*compositionComplete)(struct framebuffer_device_t* dev);
+    int (*orientationChanged) (struct framebuffer_device_t* dev);
 
 
     void* reserved_proc[8];
