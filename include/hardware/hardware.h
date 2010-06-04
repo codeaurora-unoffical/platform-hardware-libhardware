@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2010, Code Aurora Forum. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,7 +139,9 @@ enum {
     HAL_PIXEL_FORMAT_YCbCr_420_I  = 0x15,
     HAL_PIXEL_FORMAT_CbYCrY_422_I = 0x16,
     HAL_PIXEL_FORMAT_CbYCrY_420_I = 0x17,
-    HAL_PIXEL_FORMAT_YCrCb_420_SP = 0x1000
+    HAL_PIXEL_FORMAT_YCbCr_420_SP_TILED  = 0x20,
+    HAL_PIXEL_FORMAT_YCrCb_420_SP        = 0x21,
+    HAL_PIXEL_FORMAT_YCrCb_420_SP_YAMATO = 0x22,
 };
 
 
