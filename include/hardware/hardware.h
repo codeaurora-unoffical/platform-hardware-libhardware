@@ -131,17 +131,20 @@ enum {
     HAL_PIXEL_FORMAT_BGRA_8888    = 5,
     HAL_PIXEL_FORMAT_RGBA_5551    = 6,
     HAL_PIXEL_FORMAT_RGBA_4444    = 7,
-    HAL_PIXEL_FORMAT_YCbCr_422_SP = 0x10,
-    HAL_PIXEL_FORMAT_YCbCr_420_SP = 0x11,
-    HAL_PIXEL_FORMAT_YCbCr_422_P  = 0x12,
-    HAL_PIXEL_FORMAT_YCbCr_420_P  = 0x13,
-    HAL_PIXEL_FORMAT_YCbCr_422_I  = 0x14,
-    HAL_PIXEL_FORMAT_YCbCr_420_I  = 0x15,
-    HAL_PIXEL_FORMAT_CbYCrY_422_I = 0x16,
-    HAL_PIXEL_FORMAT_CbYCrY_420_I = 0x17,
-    HAL_PIXEL_FORMAT_YCbCr_420_SP_TILED  = 0x20,
-    HAL_PIXEL_FORMAT_YCrCb_420_SP        = 0x21,
-    HAL_PIXEL_FORMAT_YCrCb_420_SP_YAMATO = 0x22,
+    HAL_PIXEL_FORMAT_YCbCr_422_SP       = 0x10,     // NV16
+    HAL_PIXEL_FORMAT_YCrCb_420_SP       = 0x11,     // NV21 (_adreno)
+    HAL_PIXEL_FORMAT_YCbCr_422_P        = 0x12,     // IYUV
+    HAL_PIXEL_FORMAT_YCbCr_420_P        = 0x13,     // YUV9
+    HAL_PIXEL_FORMAT_YCbCr_422_I        = 0x14,     // YUY2 (_adreno)
+    HAL_PIXEL_FORMAT_YCbCr_420_I        = 0x15,
+    HAL_PIXEL_FORMAT_CbYCrY_422_I       = 0x16,     // UYVY (_adreno)
+    HAL_PIXEL_FORMAT_CbYCrY_420_I       = 0x17,
+    HAL_PIXEL_FORMAT_YCbCr_420_SP_TILED = 0x20,     // NV12_adreno_tiled
+    HAL_PIXEL_FORMAT_YCbCr_420_SP       = 0x21,     // NV12
+    HAL_PIXEL_FORMAT_YCrCb_420_SP_TILED = 0x22,     // NV21_adreno_tiled
+    HAL_PIXEL_FORMAT_YCrCb_422_SP       = 0x23,     // NV61
+    HAL_PIXEL_FORMAT_YCrCb_422_P        = 0x24,     // YV12 (_adreno)
+
 };
 
 
