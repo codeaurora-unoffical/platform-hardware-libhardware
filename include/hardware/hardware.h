@@ -138,7 +138,16 @@ enum {
     HAL_PIXEL_FORMAT_YCbCr_420_I  = 0x15,
     HAL_PIXEL_FORMAT_CbYCrY_422_I = 0x16,
     HAL_PIXEL_FORMAT_CbYCrY_420_I = 0x17,
-    HAL_PIXEL_FORMAT_YCrCb_420_SP = 0x1000
+    HAL_PIXEL_FORMAT_YCrCb_420_SP = 0x1000,
+
+    /* 0x8 - 0xFF range unavailable */
+
+    /* OEM specific HAL formats */
+    HAL_PIXEL_FORMAT_YCbCr_420_SP_TILED     = 0x108,
+    HAL_PIXEL_FORMAT_YCrCb_420_SP_ADRENO    = 0x10A,
+    HAL_PIXEL_FORMAT_YCrCb_420_SP_INTERLACE = 0x10C,
+    HAL_PIXEL_FORMAT_R_8          = 0x10D,
+    HAL_PIXEL_FORMAT_RG_88        = 0x10E
 };
 
 
