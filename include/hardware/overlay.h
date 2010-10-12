@@ -54,7 +54,6 @@ enum {
     OVERLAY_FORMAT_CbYCrY_422_I = HAL_PIXEL_FORMAT_CbYCrY_422_I,
     OVERLAY_FORMAT_CbYCrY_420_I = HAL_PIXEL_FORMAT_CbYCrY_420_I,
     OVERLAY_FORMAT_YCrCb_420_SP_TILE = HAL_PIXEL_FORMAT_YCbCr_420_SP_TILED,
-    OVERLAY_FORMAT_YCrCb_420_SP_INTERLACE = HAL_PIXEL_FORMAT_YCrCb_420_SP_INTERLACE,
     OVERLAY_FORMAT_DEFAULT      = 99    // The actual color format is determined
                                         // by the overlay
 };
