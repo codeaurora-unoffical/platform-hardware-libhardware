@@ -156,7 +156,7 @@ struct overlay_control_device_t {
      * returns an error if no more overlays are available. The actual
      * size and format is returned in overlay_t. */
     overlay_t* (*createOverlay)(struct overlay_control_device_t *dev,
-            uint32_t w, uint32_t h, int32_t format);
+            uint32_t w, uint32_t h, int32_t format, uint32_t format3D);
     
     /* destroys an overlay. This call releases all
      * resources associated with overlay_t and make it invalid */

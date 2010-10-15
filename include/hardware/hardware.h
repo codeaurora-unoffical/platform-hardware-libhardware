@@ -170,6 +170,17 @@ enum {
     HAL_TRANSFORM_ROT_270   = 0x07,
 };
 
+/* possible formats for 3D content*/
+enum {
+    HAL_NO_3D = 0x00,
+    HAL_3D_IN_LR_SIDE  = 0x10000,
+    HAL_3D_IN_LR_TOP   = 0x20000,
+    HAL_3D_IN_LR_INTERLEAVE = 0x40000,
+    HAL_3D_OUT_LR_SIDE  = 0x1,
+    HAL_3D_OUT_LR_TOP   = 0x2,
+    HAL_3D_OUT_LR_INTERLEAVE = 0x4
+};
+
 __END_DECLS
 
 #endif  /* ANDROID_INCLUDE_HARDWARE_HARDWARE_H */

@@ -316,7 +316,6 @@ typedef struct framebuffer_device_t {
     int (*videoOverlayStarted) (struct framebuffer_device_t* dev, int);
     int (*enableHDMIOutput) (struct framebuffer_device_t* dev, int);
 
-
     void* reserved_proc[8];
 
 } framebuffer_device_t;
