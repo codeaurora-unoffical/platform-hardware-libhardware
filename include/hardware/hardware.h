@@ -186,7 +186,7 @@ enum {
  * HAL_TRANSFORM_ROT_90 is applied CLOCKWISE and AFTER HAL_TRANSFORM_FLIP_{H|V}.
  *
  */
-
+#define HAL_TRANSFORM_ROT_MASK 0xF
 enum {
     /* flip source image horizontally (around the vertical axis) */
     HAL_TRANSFORM_FLIP_H    = 0x01,
@@ -198,6 +198,10 @@ enum {
     HAL_TRANSFORM_ROT_180   = 0x03,
     /* rotate source image 270 degrees clockwise */
     HAL_TRANSFORM_ROT_270   = 0x07,
+    /* flip source image horizontally before rotation */
+    HAL_TRANSFORM_FLIP_SRC_H = HAL_TRANSFORM_FLIP_H<<4,
+    /* flip source image vertically before rotation */
+    HAL_TRANSFORM_FLIP_SRC_V = HAL_TRANSFORM_FLIP_V<<4,
 };
 
 __END_DECLS
