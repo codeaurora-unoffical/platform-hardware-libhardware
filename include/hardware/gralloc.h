@@ -65,6 +65,9 @@ enum {
     GRALLOC_USAGE_HW_RENDER       = 0x00000200,
     /* buffer will be used by the 2D hardware blitter */
     GRALLOC_USAGE_HW_2D           = 0x00000400,
+#ifdef USE_ASHMEM
+    GRALLOC_USAGE_HW_PMEM         = 0x00002000,
+#endif
     /* buffer will be used with the framebuffer device */
     GRALLOC_USAGE_HW_FB           = 0x00001000,
     /* mask for the software usage bit-mask */
@@ -88,6 +91,7 @@ enum {
      * you know what you're doing.
      */
     GRALLOC_MODULE_PERFORM_CREATE_HANDLE_FROM_BUFFER = 0x080000001,
+    GRALLOC_MODULE_PERFORM_DECIDE_PUSH_BUFFER_HANDLING = 0x080000002,
 };
 
 /**
@@ -315,7 +319,11 @@ typedef struct framebuffer_device_t {
      */
 
     int (*compositionComplete)(struct framebuffer_device_t* dev);
-
+    int (*orientationChanged) (struct framebuffer_device_t* dev, int);
+    int (*videoOverlayStarted) (struct framebuffer_device_t* dev, int);
+    int (*enableHDMIOutput) (struct framebuffer_device_t* dev, int);
+    int (*setActionSafeWidthRatio) (struct framebuffer_device_t* dev, float);
+    int (*setActionSafeHeightRatio) (struct framebuffer_device_t* dev, float);
 
     void* reserved_proc[8];
 

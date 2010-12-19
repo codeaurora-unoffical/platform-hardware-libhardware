@@ -109,6 +109,8 @@ struct copybit_image_t {
     void        *base;
     /* handle to the image */
     native_handle_t* handle;
+    /* number of pixels added for the stride */
+    uint32_t    padding;
 };
 
 /* Rectangle */
