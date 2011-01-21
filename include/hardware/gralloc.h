@@ -258,7 +258,10 @@ typedef struct framebuffer_device_t {
     /* max swap interval supported by this framebuffer */
     const int       maxSwapInterval;
 
-    int reserved[8];
+    /* number of framebuffers */
+    const int       numFramebuffers;
+
+    int reserved[7];
     
     /* 
      * requests a specific swap-interval (same definition than EGL) 
@@ -324,8 +327,9 @@ typedef struct framebuffer_device_t {
     int (*enableHDMIOutput) (struct framebuffer_device_t* dev, int);
     int (*setActionSafeWidthRatio) (struct framebuffer_device_t* dev, float);
     int (*setActionSafeHeightRatio) (struct framebuffer_device_t* dev, float);
+    int (*dequeueBuffer) (struct framebuffer_device_t* dev, int);
 
-    void* reserved_proc[8];
+    void* reserved_proc[7];
 
 } framebuffer_device_t;
 
