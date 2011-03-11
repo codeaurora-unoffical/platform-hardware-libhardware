@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 The Android Open Source Project
+ * * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -329,7 +330,15 @@ typedef struct framebuffer_device_t {
     int (*setActionSafeHeightRatio) (struct framebuffer_device_t* dev, float);
     int (*dequeueBuffer) (struct framebuffer_device_t* dev, int);
 
-    void* reserved_proc[7];
+    /*
+     * comp. bypass specific functions
+     */
+    int (*postBypassBuffer) (struct framebuffer_device_t* dev,
+                         buffer_handle_t buffer, int width, int height,
+                         int format, int orientation, int isHPDON);
+    int (*closeBypass) (struct framebuffer_device_t* dev);
+
+    void* reserved_proc[5];
 
 } framebuffer_device_t;
 
