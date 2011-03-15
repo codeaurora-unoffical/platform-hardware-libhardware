@@ -28,6 +28,7 @@ LOCAL_SRC_FILES := 	\
 	mapper.cpp
 	
 LOCAL_MODULE := gralloc.default
+LOCAL_MODULE_TAGS := optional
 LOCAL_CFLAGS:= -DLOG_TAG=\"gralloc\"
 ifeq ($(BOARD_NO_PAGE_FLIPPING),true)
 LOCAL_CFLAGS += -DNO_PAGE_FLIPPING
