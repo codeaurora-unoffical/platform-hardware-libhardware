@@ -62,7 +62,10 @@ enum {
     COPYBIT_TRANSFORM       = 4,
     /* blurs the copied bitmap. The amount of blurring cannot be changed 
      * at this time. */
-    COPYBIT_BLUR            = 5
+    COPYBIT_BLUR            = 5,
+    /* Informs the copybit that the source and destination contains
+    premultiplied alpha */
+    COPYBIT_PREMULTIPLIED_ALPHA  = 6
 };
 
 /* values for copybit_set_parameter(COPYBIT_TRANSFORM) */
