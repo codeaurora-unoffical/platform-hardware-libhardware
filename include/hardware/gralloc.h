@@ -326,8 +326,6 @@ typedef struct framebuffer_device_t {
     int (*orientationChanged) (struct framebuffer_device_t* dev, int);
     int (*videoOverlayStarted) (struct framebuffer_device_t* dev, int);
     int (*enableHDMIOutput) (struct framebuffer_device_t* dev, int);
-    int (*setActionSafeWidthRatio) (struct framebuffer_device_t* dev, float);
-    int (*setActionSafeHeightRatio) (struct framebuffer_device_t* dev, float);
     int (*dequeueBuffer) (struct framebuffer_device_t* dev, int);
 
     /*
