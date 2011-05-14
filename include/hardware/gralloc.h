@@ -335,6 +335,11 @@ typedef struct framebuffer_device_t {
                          buffer_handle_t buffer, int width, int height,
                          int format, int orientation, int isHPDON);
     int (*closeBypass) (struct framebuffer_device_t* dev);
+    int (*postOrigResBuffer) (struct framebuffer_device_t* dev,
+                         buffer_handle_t buffer, int width, int height,
+                         int format, int orientation);
+    int (*startOrigResDisplay) (struct framebuffer_device_t* dev);
+    int (*stopOrigResDisplay) (struct framebuffer_device_t* dev);
 
     void* reserved_proc[5];
 
