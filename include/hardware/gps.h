@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +19,7 @@
 #define ANDROID_INCLUDE_HARDWARE_GPS_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
 #include <pthread.h>
@@ -88,6 +90,12 @@ typedef uint16_t GpsLocationFlags;
 /** GpsLocation has valid accuracy. */
 #define GPS_LOCATION_HAS_ACCURACY   0x0010
 
+/** Location Information Source */
+/** Position source is ULP */
+#define ULP_LOCATION_IS_FROM_HYBRID   0x0020
+/** Position source is GNSS only */
+#define ULP_LOCATION_IS_FROM_GNSS   0x0040
+
 /** Flags for the gps_set_capabilities callback. */
 
 /** GPS HAL schedules fixes for GPS_POSITION_RECURRENCE_PERIODIC mode.
@@ -101,7 +109,8 @@ typedef uint16_t GpsLocationFlags;
 #define GPS_CAPABILITY_MSA              0x0000004
 /** GPS supports single-shot fixes */
 #define GPS_CAPABILITY_SINGLE_SHOT      0x0000008
-
+/* Hybrid support, the Android Framework will query to see if this capability is set before using the ulp functionalities in HAL */
+#define ULP_CAPABILITY                  0x0000010
 /** Flags used to specify which aiding data to delete
     when calling delete_aiding_data(). */
 typedef uint32_t GpsAidingData;
@@ -221,6 +230,11 @@ typedef uint16_t AGpsStatusValue;
 #define AGPS_RIL_NETWORK_TTYPE_WIMAX        6
 
 /**
+ * Name for the EXTRA CMD interface. To pass from app to HAL
+ */
+#define ULP_RAW_CMD_INTERFACE      "ulp-raw-cmd"
+
+/**
  * Name for the GPS XTRA interface.
  */
 #define GPS_XTRA_INTERFACE      "gps-xtra"
@@ -245,12 +259,88 @@ typedef uint16_t AGpsStatusValue;
  */
 #define AGPS_RIL_INTERFACE      "agps_ril"
 
+/** Represents recurrence of location */
+typedef enum{
+    ULP_LOC_RECURRENCE_PERIODIC = 0,
+    ULP_LOC_RECURRENCE_SINGLE,
+}UlpRecurrenceCriteria;
+
+/** Represents horizontal accuracy options */
+typedef enum {
+    ULP_HORZ_ACCURACY_DONT_CARE = 0,
+    ULP_HORZ_ACCURACY_LOW,
+    ULP_HORZ_ACCURACY_MED,
+    ULP_HORZ_ACCURACY_HIGH,
+}UlpHorzAccuracyCriteria;
+
+/** Represents accuracy options (for speed, altitude, and
+ *  bearing) */
+typedef enum {
+    ULP_ACCURACY_DONT_CARE = 0,
+    ULP_ACCURACY_LOW,
+    ULP_ACCURACY_HIGH,
+}UlpAccuracyCriteria;
+
+/** Represents power consumption options */
+typedef enum {
+    ULP_POWER_REQ_DONT_CARE = 0,
+    ULP_POWER_REQ_LOW,
+    ULP_POWER_REQ_HIGH,
+}UlpPowerCriteria;
+
+/** Represents data usage options */
+typedef enum {
+    ULP_DATA_REQ_DONT_CARE = 0,
+    ULP_DATA_ALLOW,
+    ULP_DATA_DENY,
+}UlpDataUsageCriteria;
+
+/** Enable the reporting of altitude in location reports */
+#define ULP_ENABLE_ALTITUDE_REPORT   0x01
+/** Enable the reporting of speed in location reports */
+#define ULP_ENABLE_SPEED_REPORT      0x02
+/** Enable the reporting of bearing in location reports */
+#define ULP_ENABLE_BEARING_REPORT    0x04
+
+typedef struct {
+
+    uint32_t valid_mask;
+    /* delete or add */
+    int action;
+    /*via gps or hybrid provider*/
+    int provider_source;
+    /** PERIODIC or SINGLE */
+    UlpRecurrenceCriteria recurrence_type;
+    /** obtain position within the specified response time */
+    uint32_t preferred_response_time;
+    /** Send updates after the specified interval */
+    uint32_t min_interval;
+    /** Send updates after device moved a specified distance */
+    float min_distance;
+    uint32_t min_dist_sample_interval;
+    /** Fields specfied in the mask should be reported in the
+     *  position report (altitude, bearing and speed) */
+    uint32_t desired_output_parameter;
+    /** Desired accuracy for latitude, longitude */
+    UlpHorzAccuracyCriteria preferred_horizontal_accuracy;
+    /** Desired power consumption level */
+    UlpPowerCriteria preferred_power_consumption;
+    /** Desired accuracy for altitude */
+    UlpAccuracyCriteria preferred_altitude_accuracy;
+    /** Desired accuracy for bearing */
+    UlpAccuracyCriteria preferred_bearing_accuracy;
+    UlpDataUsageCriteria preferred_data_usage;
+    bool intermediate_pos_report_enabled;
+} UlpLocationCriteria;
+
 /** Represents a location. */
 typedef struct {
     /** set to sizeof(GpsLocation) */
     size_t          size;
     /** Contains GpsLocationFlags bits. */
     uint16_t        flags;
+    /* Provider indicator for HYBRID or GPS */
+    uint16_t        position_source;
     /** Represents latitude in degrees. */
     double          latitude;
     /** Represents longitude in degrees. */
@@ -266,6 +356,9 @@ typedef struct {
     float           accuracy;
     /** Timestamp for the location fix. */
     GpsUtcTime      timestamp;
+    /*allows HAL to pass additional information related to the location */
+    int             rawDataSize;         /* in # of bytes */
+    void            * rawData;
 } GpsLocation;
 
 /** Represents the status. */
@@ -440,7 +533,196 @@ typedef struct {
 
     /** Get a pointer to extension information. */
     const void* (*get_extension)(const char* name);
+
+    /* set criterias of location requests */
+    int (*update_criteria) (UlpLocationCriteria criteria );
 } GpsInterface;
+
+/** Extended interface for raw GPS command support. */
+typedef struct {
+    /** set to sizeof(ExtraCmdInterface) */
+    size_t          size;
+    /** Injects Android extra cmd into the ulp. Clarify if they are blocking calls */
+    bool  (*inject_raw_cmd)(char* bundle, int bundle_length );
+
+} InjectRawCmdInterface;
+
+/** ULP Network Interface */
+/** Request for network position status   */
+#define ULP_NETWORK_POS_STATUS_REQUEST                      (0x01)
+/** Request for periodic network positions */
+#define ULP_NETWORK_POS_START_PERIODIC_REQUEST              (0x02)
+/** Request last known location   */
+#define ULP_NETWORK_POS_GET_LAST_KNOWN_LOCATION_REQUEST     (0x03)
+/** Cancel request */
+#define ULP_NETWORK_POS_STOP_REQUEST                        (0x04)
+
+/** Position was obtained using Wifi Network  */
+#define ULP_NETWORK_POSITION_SRC_WIFI      (0x01)
+/** Position was obtained using Cell Network  */
+#define ULP_NETWORK_POSITION_SRC_CELL      (0x02)
+/** Position was obtained using an Unknown Network */
+#define ULP_NETWORK_POSITION_SRC_UNKNOWN   (0xFF)
+
+/** Represents the ULP network request */
+typedef struct {
+    /** type of request */
+    uint16_t  request_type;
+    /** Desired time between network positions/measurements in ms.
+    *   Shall be set to 0 if only one position is requested */
+    int       interval_ms;
+    /** network position source to be used */
+    uint16_t  desired_position_source;
+}UlpNetworkRequestPos;
+
+/** Callback with network position request. */
+typedef void (*ulp_network_location_request)(UlpNetworkRequestPos *req);
+
+/** ULP Network callback structure. */
+typedef struct {
+        ulp_network_location_request ulp_network_location_request_cb;
+} UlpNetworkLocationCallbacks;
+
+/** represent a network position */
+typedef struct  {
+    /** source of the position (Wifi, Cell) */
+    uint16_t pos_source;
+    /** latitude in degrees */
+    double latitude;
+    /** longitude in degrees */
+    double longitude;
+    /** Horzizontal error estimate in meters */
+    uint16_t HEPE;
+} UlpNetworkPosition;
+
+/** Represents access point information */
+typedef struct {
+    /** Mac adderess */
+    char mac_addr[6];
+    /** signal strength in dbM */
+    int32_t rssi;
+    /** Beacon channel for access point */
+    uint16_t channel;
+
+    /** Bit 0 = AP is used by WiFi positioning system
+     *  Bit 1 = AP doesn't broadcast SSID Bit 2 = AP has encrption
+     *  turned on Bit 3 = AP is in infrastructure mode and not in
+     *  ad-hoc/unknown mode  */
+    uint8_t ap_qualifier;
+} UlpNetworkAccessPointInfo;
+
+/** Represents Wifi information */
+typedef struct {
+      /** Number of APs in the calculated position (-1 means
+      *  unknown) */
+      uint8_t num_aps_in_pos;
+      /** Information of the scanned ap's used in the position estimation*/
+      UlpNetworkAccessPointInfo *ap_info;
+} UlpNetworkWifiInfo;
+
+
+/** Represent network landscape information */
+typedef struct {
+    /** network type Cell/Wifi */
+    uint8_t network_type;
+    /** network information */
+    union {
+        UlpNetworkWifiInfo wifi_info;
+        uint32_t cell_info;
+    } u;
+} UlpNetworkLandscape;
+
+/** network report valid flags */
+/** fix time is valid */
+#define ULP_NETWORK_POSITION_REPORT_HAS_FIX_TIME  (0x01)
+/** position is valid */
+#define ULP_NETWORK_POSITION_REPORT_HAS_POSITION  (0x02)
+/** landscape is valid */
+#define ULP_NETWORK_POSITION_REPORT_HAS_LANDSCAPE (0x04)
+
+/** Represents the network position report */
+typedef struct
+{
+    /** validity flags */
+    uint16_t valid_flag;
+    /** time fo network fix */
+    GpsUtcTime fix_time;
+    /** network position */
+    UlpNetworkPosition position;
+    /** network landscape */
+    UlpNetworkLandscape landscape_info;
+}UlpNetworkPositionReport;
+
+/** represents ULP network interface extension */
+typedef struct
+{
+    /** initialize network interface */
+    int ( *ulp_network_init)(UlpNetworkLocationCallbacks *callback);
+    /** send network position */
+    int ( *ulp_send_network_position)(UlpNetworkPositionReport *position);
+}UlpNetworkInterface;
+
+/** Information for the ULP Phone context interface */
+
+/** the Location settings context supports only ON_CHANGE
+ *  request type */
+#define ULP_PHONE_CONTEXT_GPS_SETTING                 (0x01)
+#define ULP_PHONE_CONTEXT_CELL_BASED_POSITION_SETTING (0x02)
+#define ULP_PHONE_CONTEXT_WIFI_SETTING                (0x03)
+/** The battery charging state context supports only
+ * ON_CHANGE request type */
+#define ULP_PHONE_CONTEXT_BATTERY_CHARGING_STATE      (0x04)
+
+/** return phone context only once */
+#define ULP_PHONE_CONTEXT_REQUEST_TYPE_SINGLE         (0x01)
+/** return phone context periodcially */
+#define ULP_PHONE_CONTEXT_REQUEST_TYPE_PERIODIC       (0x02)
+/** return phone context when it changes */
+#define ULP_PHONE_CONTEXT_REQUEST_TYPE_ON_CHANGE      (0x03)
+
+/** Represents ULP phone context request   */
+typedef struct {
+    /** context type requested */
+    uint16_t    context_type;
+    /** request type  */
+    uint16_t    request_type;
+    /** interval in ms if request type is periodic */
+    int            interval_ms;
+}UlpPhoneContextRequest;
+
+/** Callback for phone context request. */
+typedef void (*ulp_request_phone_context)(UlpPhoneContextRequest *req);
+
+/** ULP Phone Context callback structure. */
+typedef struct {
+        ulp_request_phone_context ulp_request_phone_context_cb;
+}UlpPhoneContextCallbacks;
+
+/** Represents the phone context settings */
+typedef struct {
+    /** Phone context information type */
+    uint8_t context_type;
+    /** network information */
+    union {
+        /** gps setting */
+        bool    is_gps_enabled;
+        /** is network positioning enabled */
+        bool    is_network_position_available;
+        /** is wifi turned on */
+        bool    is_wifi_setting_enabled;
+        /** is battery being currently charged */
+        bool    is_battery_charging;
+    } u;
+} UlpPhoneContextSettings;
+
+/** Represent the phone contxt interface */
+typedef struct
+{
+    /** Initialize, register callback */
+    int (*ulp_phone_context_init)(UlpPhoneContextCallbacks *callback);
+    /** send the phone context settings */
+    int (*ulp_phone_context_settings) (UlpPhoneContextSettings *settings );
+}UlpPhoneContextInterface;
 
 /** Callback to request the client to download XTRA data.
  *  The client should download XTRA data and inject it by calling inject_xtra_data().
