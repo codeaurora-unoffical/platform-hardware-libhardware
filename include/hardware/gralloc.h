@@ -340,8 +340,9 @@ typedef struct framebuffer_device_t {
                          int format, int orientation);
     int (*startOrigResDisplay) (struct framebuffer_device_t* dev);
     int (*stopOrigResDisplay) (struct framebuffer_device_t* dev);
+    int (*copyBypassBuffer) (struct framebuffer_device_t* dev);
 
-    void* reserved_proc[5];
+    void* reserved_proc[4];
 
 } framebuffer_device_t;
 
