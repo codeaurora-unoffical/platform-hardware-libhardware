@@ -798,15 +798,16 @@ typedef struct {
      * Notifies that a data connection is available and sets
      * the name of the APN to be used for SUPL.
      */
-    int  (*data_conn_open)( const char* apn,  AGpsBearerType bearerType );
+    int  (*data_conn_open)( AGpsType agpsType,
+                            const char* apn, AGpsBearerType bearerType );
     /**
      * Notifies that the AGPS data connection has been closed.
      */
-    int  (*data_conn_closed)();
+    int  (*data_conn_closed)( AGpsType agpsType );
     /**
      * Notifies that a data connection is not available for AGPS.
      */
-    int  (*data_conn_failed)();
+    int  (*data_conn_failed)(AGpsType  agpsType );
     /**
      * Sets the hostname and port for the AGPS server.
      */
