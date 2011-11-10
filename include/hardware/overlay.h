@@ -175,6 +175,11 @@ struct overlay_control_device_t {
     int (*setParameter)(struct overlay_control_device_t *dev,
             overlay_t* overlay, int param, int value);
 
+    /* set visual parameters for this overlay.
+     * visual parameters include sharpness and hsic. */
+    int (*setVisualParam)(struct overlay_control_device_t *dev,
+            overlay_t* overlay, int8_t paramType, float paramValue);
+
     int (*stage)(struct overlay_control_device_t *dev, overlay_t* overlay);
     int (*commit)(struct overlay_control_device_t *dev, overlay_t* overlay);
 };
