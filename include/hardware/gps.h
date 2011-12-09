@@ -91,6 +91,18 @@ typedef uint16_t GpsLocationFlags;
 #define GPS_LOCATION_HAS_ACCURACY   0x0010
 /** Location has valid source information. */
 #define LOCATION_HAS_SOURCE_INFO   0x0020
+/** GpsLocation has valid "is indoor?" flag */
+#define GPS_LOCATION_HAS_IS_INDOOR   0x0040
+/** GpsLocation has valid floor number */
+#define GPS_LOCATION_HAS_FLOOR_NUMBER   0x0080
+/** GpsLocation has valid map URL*/
+#define GPS_LOCATION_HAS_MAP_URL   0x0100
+/** GpsLocation has valid map index */
+#define GPS_LOCATION_HAS_MAP_INDEX   0x0200
+
+/** Sizes for indoor fields */
+#define GPS_LOCATION_MAP_URL_SIZE 400
+#define GPS_LOCATION_MAP_INDEX_SIZE 16
 
 /** Location Information Source */
 /** Position source is ULP */
@@ -389,6 +401,10 @@ typedef struct {
     /*allows HAL to pass additional information related to the location */
     int             rawDataSize;         /* in # of bytes */
     void            * rawData;
+    bool            is_indoor;
+    float           floor_number;
+    char            map_url[GPS_LOCATION_MAP_URL_SIZE];
+    unsigned char   map_index[GPS_LOCATION_MAP_INDEX_SIZE];
 } GpsLocation;
 
 /** Represents the status. */
