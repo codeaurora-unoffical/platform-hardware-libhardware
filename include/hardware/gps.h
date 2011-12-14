@@ -32,7 +32,7 @@ __BEGIN_DECLS
  * The id of this module
  */
 #define GPS_HARDWARE_MODULE_ID "gps"
-
+#define ULP_NETWORK_INTERFACE "ulp-network-interface"
 
 /** Milliseconds since January 1, 1970 */
 typedef int64_t GpsUtcTime;
@@ -89,12 +89,14 @@ typedef uint16_t GpsLocationFlags;
 #define GPS_LOCATION_HAS_BEARING    0x0008
 /** GpsLocation has valid accuracy. */
 #define GPS_LOCATION_HAS_ACCURACY   0x0010
+/** Location has valid source information. */
+#define LOCATION_HAS_SOURCE_INFO   0x0020
 
 /** Location Information Source */
 /** Position source is ULP */
-#define ULP_LOCATION_IS_FROM_HYBRID   0x0020
+#define ULP_LOCATION_IS_FROM_HYBRID   0x0001
 /** Position source is GNSS only */
-#define ULP_LOCATION_IS_FROM_GNSS   0x0040
+#define ULP_LOCATION_IS_FROM_GNSS   0x0002
 
 /** Flags for the gps_set_capabilities callback. */
 
@@ -112,7 +114,7 @@ typedef uint16_t GpsLocationFlags;
 /** GPS supports on demand time injection */
 #define GPS_CAPABILITY_ON_DEMAND_TIME   0x0000010
 /* Hybrid support, the Android Framework will query to see if this capability is set before using the ulp functionalities in HAL */
-#define ULP_CAPABILITY                  0x0000010
+#define ULP_CAPABILITY                  0x0000020
 /** Flags used to specify which aiding data to delete
     when calling delete_aiding_data(). */
 typedef uint32_t GpsAidingData;
@@ -260,6 +262,10 @@ typedef uint16_t AGpsStatusValue;
  * Name for the AGPS-RIL interface.
  */
 #define AGPS_RIL_INTERFACE      "agps_ril"
+/**
+* Name for ULP Phone Context Interface
+*/
+#define ULP_PHONE_CONTEXT_INTERFACE "ulp-phone-context"
 
 /** Represents recurrence of location */
 typedef enum{
@@ -304,10 +310,32 @@ typedef enum {
 /** Enable the reporting of bearing in location reports */
 #define ULP_ENABLE_BEARING_REPORT    0x04
 
+#define ULP_CRITERIA_HAS_ACTION                        0x00000001
+#define ULP_CRITERIA_HAS_PROVIDER_SOURCE               0x00000002
+#define ULP_CRITERIA_HAS_RECURRENCE_TYPE               0x00000004
+#define ULP_CRITERIA_HAS_PREFERRED_RESPONSE_TIME       0x00000010
+#define ULP_CRITERIA_HAS_MIN_INTERVAL                  0x00000020
+#define ULP_CRITERIA_HAS_MIN_DISTANCE                  0x00000040
+#define ULP_CRITERIA_HAS_MIN_DIST_SAMPLE_INTERVAL      0x00000080
+#define ULP_CRITERIA_HAS_DESIRED_OUTPUT_PARAMETER      0x00000100
+#define ULP_CRITERIA_HAS_PREFERRED_HORIZONTAL_ACCURACY 0x00000200
+#define ULP_CRITERIA_HAS_PREFERRED_POWER_CONSUMPTION   0x00000400
+#define ULP_CRITERIA_HAS_PREFERRED_ALTITUDE_ACCURACY   0x00000800
+#define ULP_CRITERIA_HAS_PREFERRED_BEARING_ACCURACY    0x00001000
+#define ULP_CRITERIA_HAS_PREFERRED_DATA_USAGE          0x00002000
+#define ULP_CRITERIA_HAS_INTERMEDIATE_POS_REPORT_ENABLED    0x00004000
+
+#define ULP_PROVIDER_SOURCE_GNSS                       0x00000001
+#define ULP_PROVIDER_SOURCE_HYBRID                     0x00000002
+
+
+#define ULP_ADD_CRITERIA     1
+#define ULP_REMOVE_CRITERIA  2
+
 typedef struct {
 
     uint32_t valid_mask;
-    /* delete or add */
+    /* delete or add. This is a mandatory field */
     int action;
     /*via gps or hybrid provider*/
     int provider_source;
@@ -568,7 +596,7 @@ typedef struct {
 /** Position was obtained using Cell Network  */
 #define ULP_NETWORK_POSITION_SRC_CELL      (0x02)
 /** Position was obtained using an Unknown Network */
-#define ULP_NETWORK_POSITION_SRC_UNKNOWN   (0xFF)
+#define ULP_NETWORK_POSITION_SRC_UNKNOWN   (0x00)
 
 /** Represents the ULP network request */
 typedef struct {
@@ -662,10 +690,12 @@ typedef struct
 /** represents ULP network interface extension */
 typedef struct
 {
+    /** set to sizeof(UlpNetworkInterface) */
+    size_t          size;
     /** initialize network interface */
-    int ( *ulp_network_init)(UlpNetworkLocationCallbacks *callback);
+    int ( *init)(UlpNetworkLocationCallbacks *callback);
     /** send network position */
-    int ( *ulp_send_network_position)(UlpNetworkPositionReport *position);
+    int ( *ulp_send_network_position)(UlpNetworkPositionReport *position_report);
 }UlpNetworkInterface;
 
 /** Information for the ULP Phone context interface */
@@ -673,11 +703,12 @@ typedef struct
 /** the Location settings context supports only ON_CHANGE
  *  request type */
 #define ULP_PHONE_CONTEXT_GPS_SETTING                 (0x01)
-#define ULP_PHONE_CONTEXT_CELL_BASED_POSITION_SETTING (0x02)
-#define ULP_PHONE_CONTEXT_WIFI_SETTING                (0x03)
+#define ULP_PHONE_CONTEXT_NETWORK_POSITION_SETTING    (0x02)
+#define ULP_PHONE_CONTEXT_WIFI_SETTING                (0x04)
 /** The battery charging state context supports only
  * ON_CHANGE request type */
-#define ULP_PHONE_CONTEXT_BATTERY_CHARGING_STATE      (0x04)
+#define ULP_PHONE_CONTEXT_BATTERY_CHARGING_STATE      (0x08)
+#define ULP_PHONE_CONTEXT_AGPS_SETTING                (0x010)
 
 /** return phone context only once */
 #define ULP_PHONE_CONTEXT_REQUEST_TYPE_SINGLE         (0x01)
@@ -685,6 +716,7 @@ typedef struct
 #define ULP_PHONE_CONTEXT_REQUEST_TYPE_PERIODIC       (0x02)
 /** return phone context when it changes */
 #define ULP_PHONE_CONTEXT_REQUEST_TYPE_ON_CHANGE      (0x03)
+
 
 /** Represents ULP phone context request   */
 typedef struct {
@@ -707,27 +739,30 @@ typedef struct {
 /** Represents the phone context settings */
 typedef struct {
     /** Phone context information type */
-    uint8_t context_type;
+    uint16_t context_type;
+
     /** network information */
-    union {
-        /** gps setting */
-        bool    is_gps_enabled;
-        /** is network positioning enabled */
-        bool    is_network_position_available;
-        /** is wifi turned on */
-        bool    is_wifi_setting_enabled;
-        /** is battery being currently charged */
-        bool    is_battery_charging;
-    } u;
+    /** gps setting */
+    bool    is_gps_enabled;
+    /** is network positioning enabled */
+    bool    is_network_position_available;
+    /** is wifi turned on */
+    bool    is_wifi_setting_enabled;
+    /** is battery being currently charged */
+    bool    is_battery_charging;
+    /* is agps enabled for single shot */
+    bool    is_agps_enabled;
 } UlpPhoneContextSettings;
 
 /** Represent the phone contxt interface */
 typedef struct
 {
+    /** set to sizeof(UlpPhoneContextInterface) */
+    size_t          size;
     /** Initialize, register callback */
-    int (*ulp_phone_context_init)(UlpPhoneContextCallbacks *callback);
+    int (*init)(UlpPhoneContextCallbacks *callback);
     /** send the phone context settings */
-    int (*ulp_phone_context_settings) (UlpPhoneContextSettings *settings );
+    int (*ulp_phone_context_settings_update) (UlpPhoneContextSettings *settings );
 }UlpPhoneContextInterface;
 
 /** Callback to request the client to download XTRA data.
