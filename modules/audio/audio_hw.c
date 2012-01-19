@@ -207,6 +207,89 @@ static int in_remove_audio_effect(const struct audio_stream *stream, effect_hand
     return 0;
 }
 
+static int adev_set_parameters(struct audio_hw_device *dev, const char *kvpairs)
+{
+    return -ENOSYS;
+}
+
+static char * adev_get_parameters(const struct audio_hw_device *dev,
+                                  const char *keys)
+{
+    return NULL;
+}
+
+static uint32_t adev_get_supported_devices(const struct audio_hw_device *dev)
+{
+    return (/* OUT */
+            AUDIO_DEVICE_OUT_EARPIECE |
+            AUDIO_DEVICE_OUT_SPEAKER |
+            AUDIO_DEVICE_OUT_WIRED_HEADSET |
+            AUDIO_DEVICE_OUT_WIRED_HEADPHONE |
+            AUDIO_DEVICE_OUT_AUX_DIGITAL |
+            AUDIO_DEVICE_OUT_ANLG_DOCK_HEADSET |
+            AUDIO_DEVICE_OUT_DGTL_DOCK_HEADSET |
+            AUDIO_DEVICE_OUT_ALL_SCO |
+            AUDIO_DEVICE_OUT_ANC_HEADSET |
+            AUDIO_DEVICE_OUT_ANC_HEADPHONE |
+            AUDIO_DEVICE_OUT_FM |
+            AUDIO_DEVICE_OUT_FM_TX |
+            AUDIO_DEVICE_OUT_DIRECTOUTPUT |
+            AUDIO_DEVICE_OUT_DEFAULT |
+            /* IN */
+            AUDIO_DEVICE_IN_COMMUNICATION |
+            AUDIO_DEVICE_IN_AMBIENT |
+            AUDIO_DEVICE_IN_BUILTIN_MIC |
+            AUDIO_DEVICE_IN_WIRED_HEADSET |
+            AUDIO_DEVICE_IN_AUX_DIGITAL |
+            AUDIO_DEVICE_IN_BACK_MIC |
+            AUDIO_DEVICE_IN_ALL_SCO |
+            AUDIO_DEVICE_IN_ANC_HEADSET |
+            AUDIO_DEVICE_IN_FM_RX |
+            AUDIO_DEVICE_IN_FM_RX_A2DP |
+            AUDIO_DEVICE_IN_DEFAULT);
+}
+
+static int adev_init_check(const struct audio_hw_device *dev)
+{
+    return 0;
+}
+
+static int adev_set_voice_volume(struct audio_hw_device *dev, float volume)
+{
+    return -ENOSYS;
+}
+
+static int adev_set_master_volume(struct audio_hw_device *dev, float volume)
+{
+    return -ENOSYS;
+}
+
+static int adev_set_fm_volume(struct audio_hw_device *dev, float volume)
+{
+    return 0;
+}
+
+static int adev_open_output_session(struct audio_hw_device *dev,
+                                   uint32_t devices,
+                                   int *format,
+                                   int sessionId,
+                                   struct audio_stream_out **stream_out)
+{
+    struct stub_audio_device *ladev = (struct stub_audio_device *)dev;
+    struct stub_stream_out *out;
+    int ret;
+
+    out = (struct stub_stream_out *)calloc(1, sizeof(struct stub_stream_out));
+    if (!out)
+        return -ENOMEM;
+    out->stream.common.standby = out_standby;
+    out->stream.common.set_parameters = out_set_parameters;
+    out->stream.set_volume = out_set_volume;
+
+    *stream_out = &out->stream;
+    return 0;
+}
+
 static int adev_open_output_stream(struct audio_hw_device *dev,
                                    uint32_t devices, int *format,
                                    uint32_t *channels, uint32_t *sample_rate,
@@ -236,7 +319,9 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
     out->stream.set_volume = out_set_volume;
     out->stream.write = out_write;
     out->stream.get_render_position = out_get_render_position;
-
+    *channels = AUDIO_CHANNEL_OUT_STEREO;
+    *sample_rate = 44100;
+    *format = AUDIO_FORMAT_PCM_16_BIT;
     *stream_out = &out->stream;
     return 0;
 
@@ -250,32 +335,6 @@ static void adev_close_output_stream(struct audio_hw_device *dev,
                                      struct audio_stream_out *stream)
 {
     free(stream);
-}
-
-static int adev_set_parameters(struct audio_hw_device *dev, const char *kvpairs)
-{
-    return -ENOSYS;
-}
-
-static char * adev_get_parameters(const struct audio_hw_device *dev,
-                                  const char *keys)
-{
-    return NULL;
-}
-
-static int adev_init_check(const struct audio_hw_device *dev)
-{
-    return 0;
-}
-
-static int adev_set_voice_volume(struct audio_hw_device *dev, float volume)
-{
-    return -ENOSYS;
-}
-
-static int adev_set_master_volume(struct audio_hw_device *dev, float volume)
-{
-    return -ENOSYS;
 }
 
 static int adev_set_mode(struct audio_hw_device *dev, int mode)
@@ -329,7 +388,6 @@ static int adev_open_input_stream(struct audio_hw_device *dev, uint32_t devices,
     in->stream.set_gain = in_set_gain;
     in->stream.read = in_read;
     in->stream.get_input_frames_lost = in_get_input_frames_lost;
-
     *stream_in = &in->stream;
     return 0;
 
@@ -356,29 +414,6 @@ static int adev_close(hw_device_t *device)
     return 0;
 }
 
-static uint32_t adev_get_supported_devices(const struct audio_hw_device *dev)
-{
-    return (/* OUT */
-            AUDIO_DEVICE_OUT_EARPIECE |
-            AUDIO_DEVICE_OUT_SPEAKER |
-            AUDIO_DEVICE_OUT_WIRED_HEADSET |
-            AUDIO_DEVICE_OUT_WIRED_HEADPHONE |
-            AUDIO_DEVICE_OUT_AUX_DIGITAL |
-            AUDIO_DEVICE_OUT_ANLG_DOCK_HEADSET |
-            AUDIO_DEVICE_OUT_DGTL_DOCK_HEADSET |
-            AUDIO_DEVICE_OUT_ALL_SCO |
-            AUDIO_DEVICE_OUT_DEFAULT |
-            /* IN */
-            AUDIO_DEVICE_IN_COMMUNICATION |
-            AUDIO_DEVICE_IN_AMBIENT |
-            AUDIO_DEVICE_IN_BUILTIN_MIC |
-            AUDIO_DEVICE_IN_WIRED_HEADSET |
-            AUDIO_DEVICE_IN_AUX_DIGITAL |
-            AUDIO_DEVICE_IN_BACK_MIC |
-            AUDIO_DEVICE_IN_ALL_SCO |
-            AUDIO_DEVICE_IN_DEFAULT);
-}
-
 static int adev_open(const hw_module_t* module, const char* name,
                      hw_device_t** device)
 {
@@ -401,6 +436,7 @@ static int adev_open(const hw_module_t* module, const char* name,
     adev->device.init_check = adev_init_check;
     adev->device.set_voice_volume = adev_set_voice_volume;
     adev->device.set_master_volume = adev_set_master_volume;
+    adev->device.set_fm_volume = adev_set_fm_volume;
     adev->device.set_mode = adev_set_mode;
     adev->device.set_mic_mute = adev_set_mic_mute;
     adev->device.get_mic_mute = adev_get_mic_mute;
@@ -408,6 +444,7 @@ static int adev_open(const hw_module_t* module, const char* name,
     adev->device.get_parameters = adev_get_parameters;
     adev->device.get_input_buffer_size = adev_get_input_buffer_size;
     adev->device.open_output_stream = adev_open_output_stream;
+    adev->device.open_output_session = adev_open_output_session;
     adev->device.close_output_stream = adev_close_output_stream;
     adev->device.open_input_stream = adev_open_input_stream;
     adev->device.close_input_stream = adev_close_input_stream;
