@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
- * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
+ * Copyright (c) 2011,2012 Code Aurora Forum. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -163,6 +163,10 @@ typedef int16_t AGpsType;
 #define AGPS_TYPE_SUPL          1
 #define AGPS_TYPE_C2K           2
 #define AGPS_TYPE_WWAN_ANY      3
+#define AGPS_TYPE_WIFI          4
+
+/** SSID length */
+#define SSID_BUF_SIZE (32+1)
 
 typedef uint16_t AGpsSetIDType;
 #define AGPS_SETID_TYPE_NONE    0
@@ -827,6 +831,8 @@ typedef struct {
     AGpsStatusValue status;
     int             ipv4_addr;
     char            ipv6_addr[16];
+    char            ssid[SSID_BUF_SIZE];
+    char            password[SSID_BUF_SIZE];
 } AGpsStatus;
 
 /** Callback with AGPS status information.
