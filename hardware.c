@@ -126,6 +126,8 @@ int hw_get_module_by_class(const char *class_id, const char *inst,
     char prop[PATH_MAX];
     char path[PATH_MAX];
     char name[PATH_MAX];
+    int is_mpq;
+    IS_TARGET_MPQ(is_mpq);
 
     if (inst)
         snprintf(name, PATH_MAX, "%s.%s", class_id, inst);
@@ -149,6 +151,13 @@ int hw_get_module_by_class(const char *class_id, const char *inst,
                      HAL_LIBRARY_PATH2, name, prop);
             if (access(path, R_OK) == 0) break;
 
+            if( (!strncmp(name,"audio.primary",13) ||
+                !strncmp(name,"audio_policy",12)) &&
+                (is_mpq) && (!strncmp(prop,"msm8960",7)) )
+            {
+                strlcpy(prop,"mpq8064",8);
+                LOGE("setting prop to mpq8064");
+            }
             snprintf(path, sizeof(path), "%s/%s.%s.so",
                      HAL_LIBRARY_PATH1, name, prop);
             if (access(path, R_OK) == 0) break;
