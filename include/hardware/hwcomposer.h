@@ -351,9 +351,9 @@ typedef struct hwc_composer_device {
 
     /*
      * This API is called by Surfaceflinger to inform the HWC about the
-     * HDMI status.
+     * custom events(external display).
      */
-    void (*enableHDMIOutput)(struct hwc_composer_device* dev, int externaltype);
+    void (*perform)(struct hwc_composer_device* dev, int event, int value);
 
 } hwc_composer_device_t;
 
