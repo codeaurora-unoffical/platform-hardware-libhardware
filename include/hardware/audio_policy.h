@@ -132,7 +132,9 @@ struct audio_policy {
                                     audio_stream_type_t stream,
                                     uint32_t format,
                                     audio_policy_output_flags_t flags,
-                                    int sessionId);
+                                    int sessionId,
+                                    uint32_t samplingRate,
+                                    uint32_t channels);
 
     /* pause session created for LPA Playback */
     void (*pause_session)(struct audio_policy *pol,
@@ -274,7 +276,9 @@ struct audio_policy_service_ops {
                                      uint32_t *pFormat,
                                      audio_policy_output_flags_t flags,
                                      int32_t stream,
-                                     int32_t sessionId);
+                                     int32_t sessionId,
+                                     uint32_t samplingRate,
+                                     uint32_t channels);
 
     audio_io_handle_t (*close_session)(void *service,
                                       audio_io_handle_t output);
