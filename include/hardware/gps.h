@@ -723,8 +723,9 @@ typedef struct
 #define ULP_PHONE_CONTEXT_WIFI_SETTING                (0x04)
 /** The battery charging state context supports only
  * ON_CHANGE request type */
-#define ULP_PHONE_CONTEXT_BATTERY_CHARGING_STATE      (0x08)
-#define ULP_PHONE_CONTEXT_AGPS_SETTING                (0x010)
+#define ULP_PHONE_CONTEXT_BATTERY_CHARGING_STATE          (0x08)
+#define ULP_PHONE_CONTEXT_AGPS_SETTING                    (0x010)
+#define ULP_PHONE_CONTEXT_ENH_LOCATION_SERVICES_SETTING   (0x020)
 
 /** return phone context only once */
 #define ULP_PHONE_CONTEXT_REQUEST_TYPE_SINGLE         (0x01)
@@ -768,6 +769,8 @@ typedef struct {
     bool    is_battery_charging;
     /* is agps enabled for single shot */
     bool    is_agps_enabled;
+    /* is Enhanced Location Services enabled by user*/
+    bool    is_enh_location_services_enabled;
 } UlpPhoneContextSettings;
 
 /** Represent the phone contxt interface */
