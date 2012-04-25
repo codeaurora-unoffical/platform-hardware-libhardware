@@ -209,6 +209,17 @@ struct audio_stream_out {
      * stop audio data rendering
      */
     int (*stop)(struct audio_stream_out *stream);
+    /**
+    * return the current timestamp after quering to the driver
+     */
+    int (*get_time_stamp)(const struct audio_stream_out *stream,
+                               uint64_t *time_stamp);
+    /**
+    * EOS notification from HAL to Player
+     */
+    int (*set_observer)(const struct audio_stream_out *stream,
+                               void *observer);
+
 };
 typedef struct audio_stream_out audio_stream_out_t;
 
@@ -435,7 +446,15 @@ static inline int audio_hw_device_close(struct audio_hw_device* device)
     return device->common.close(&device->common);
 }
 
-
+#ifdef __cplusplus
+/**
+ *Observer class to post the Events from HAL to player
+*/
+class AudioEventObserver {
+public:
+    virtual void postEOS(int64_t delayUs) = 0;
+    virtual ~AudioEventObserver() {};
+};
+#endif
 __END_DECLS
-
 #endif  // ANDROID_AUDIO_INTERFACE_H
