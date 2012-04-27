@@ -303,7 +303,8 @@ static inline uint32_t audio_stream_frame_size(struct audio_stream *s)
 
     if (audio_is_input_channel(chan_mask)) {
         chan_mask &= (AUDIO_CHANNEL_IN_STEREO | \
-                      AUDIO_CHANNEL_IN_MONO );
+                      AUDIO_CHANNEL_IN_MONO | \
+                      AUDIO_CHANNEL_IN_5POINT1);
     }
 
     return popcount(chan_mask) * chan_samp_sz;
