@@ -149,10 +149,9 @@ typedef struct framebuffer_device_t {
     /*
      * (*perform)() is used to inform custom event to fb device
      * event - Type of event
-     * val1 - associated with event
-     * val2 - additional value(if any) associated with event
+     * value - parameter(s) needed to handle the event
      */
-    int (*perform) (struct framebuffer_device_t* dev, int event, int value);
+    int (*perform) (struct framebuffer_device_t* dev, int event, void* value);
 
 } framebuffer_device_t;
 
