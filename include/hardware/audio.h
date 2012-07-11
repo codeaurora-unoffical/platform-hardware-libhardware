@@ -256,11 +256,36 @@ struct audio_stream_out {
                                uint32_t *dsp_frames);
 
     /**
+     * start audio data rendering
+     */
+    int (*start)(struct audio_stream_out *stream);
+
+    /**
+     * pause audio rendering
+     */
+    int (*pause)(struct audio_stream_out *stream);
+
+    /**
+     * flush audio data with driver
+     */
+    int (*flush)(struct audio_stream_out *stream);
+
+    /**
+     * stop audio data rendering
+     */
+    int (*stop)(struct audio_stream_out *stream);
+
+    /**
      * get the local time at which the next write to the audio driver will be presented.
      * The units are microseconds, where the epoch is decided by the local audio HAL.
      */
     int (*get_next_write_timestamp)(const struct audio_stream_out *stream,
                                     int64_t *timestamp);
+    /**
+    * EOS notification from HAL to Flinger
+     */
+    int (*set_observer)(const struct audio_stream_out *stream,
+                               void *observer);
 
 };
 typedef struct audio_stream_out audio_stream_out_t;
@@ -461,7 +486,16 @@ static inline int audio_hw_device_close(struct audio_hw_device* device)
     return device->common.close(&device->common);
 }
 
-
+#ifdef __cplusplus
+/**
+ *Observer class to post the Events from HAL to Flinger
+*/
+class AudioEventObserver {
+public:
+    virtual ~AudioEventObserver() {}
+    virtual void postEOS(int64_t delayUs) = 0;
+};
+#endif
 __END_DECLS
 
 #endif  // ANDROID_AUDIO_INTERFACE_H
