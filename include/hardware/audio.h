@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (c) 2012, Code Aurora Forum. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -296,6 +297,15 @@ static inline size_t audio_stream_frame_size(struct audio_stream *s)
     size_t chan_samp_sz;
 
     switch (s->get_format(s)) {
+    case AUDIO_FORMAT_AMR_NB:
+        chan_samp_sz = 32;
+        break;
+    case AUDIO_FORMAT_EVRC:
+        chan_samp_sz = 23;
+        break;
+    case AUDIO_FORMAT_QCELP:
+        chan_samp_sz = 35;
+        break;
     case AUDIO_FORMAT_PCM_16_BIT:
         chan_samp_sz = sizeof(int16_t);
         break;
