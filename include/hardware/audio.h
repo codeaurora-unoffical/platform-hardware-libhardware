@@ -20,6 +20,7 @@
 #define ANDROID_AUDIO_HAL_INTERFACE_H
 
 #include <stdint.h>
+#include <string.h>
 #include <strings.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
@@ -116,6 +117,8 @@ __BEGIN_DECLS
  * "sup_sampling_rates=44100|48000" */
 #define AUDIO_PARAMETER_STREAM_SUP_SAMPLING_RATES "sup_sampling_rates"
 
+/* Query if surround sound recording is supported */
+#define AUDIO_PARAMETER_KEY_SSR "ssr"
 
 /**************************************/
 
@@ -295,8 +298,16 @@ typedef struct audio_stream_in audio_stream_in_t;
 static inline size_t audio_stream_frame_size(struct audio_stream *s)
 {
     size_t chan_samp_sz;
+    uint32_t chan_mask = s->get_channels(s);
+    int format = s->get_format(s);
 
-    switch (s->get_format(s)) {
+    if (audio_is_input_channel(chan_mask)) {
+        chan_mask &= (AUDIO_CHANNEL_IN_STEREO | \
+                      AUDIO_CHANNEL_IN_MONO | \
+                      AUDIO_CHANNEL_IN_5POINT1);
+    }
+
+    switch (format) {
     case AUDIO_FORMAT_AMR_NB:
         chan_samp_sz = 32;
         break;
@@ -315,7 +326,7 @@ static inline size_t audio_stream_frame_size(struct audio_stream *s)
         break;
     }
 
-    return popcount(s->get_channels(s)) * chan_samp_sz;
+    return popcount(chan_mask) * chan_samp_sz;
 }
 
 
