@@ -24,6 +24,7 @@
 #include <strings.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
+#include <string.h>
 
 #include <cutils/bitops.h>
 
@@ -300,6 +301,18 @@ static inline size_t audio_stream_frame_size(struct audio_stream *s)
     size_t chan_samp_sz;
     uint32_t chan_mask = s->get_channels(s);
     int format = s->get_format(s);
+
+    if (audio_is_input_channel(chan_mask)) {
+        chan_mask &= (AUDIO_CHANNEL_IN_STEREO | \
+                      AUDIO_CHANNEL_IN_MONO );
+    }
+
+    if(!strcmp(s->get_parameters(s, "voip_flag"),"voip_flag=1")) {
+        if(format != AUDIO_FORMAT_PCM_8_BIT)
+            return popcount(chan_mask) * sizeof(int16_t);
+        else
+            return popcount(chan_mask) * sizeof(int8_t);
+    }
 
     if (audio_is_input_channel(chan_mask)) {
         chan_mask &= (AUDIO_CHANNEL_IN_STEREO | \
