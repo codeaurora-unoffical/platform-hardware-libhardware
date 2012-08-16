@@ -401,6 +401,9 @@ static inline size_t audio_stream_frame_size(struct audio_stream *s)
     case AUDIO_FORMAT_QCELP:
         chan_samp_sz = 35;
         break;
+    case AUDIO_FORMAT_AMR_WB:
+        chan_samp_sz = 61;
+        break;
     case AUDIO_FORMAT_PCM_16_BIT:
         chan_samp_sz = sizeof(int16_t);
         break;
