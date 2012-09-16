@@ -144,6 +144,25 @@ struct audio_config {
 typedef struct audio_config audio_config_t;
 typedef struct buf_info;
 
+struct audio_avsync_statistics {
+    uint32_t absolute_time_msw;
+    uint32_t absolute_time_lsw;
+    uint32_t duration_region_A_msw;
+    uint32_t duration_region_A_lsw;
+    uint32_t average_region_A_msw;
+    uint32_t average_region_A_lsw;
+    uint32_t duration_region_B_msw;
+    uint32_t duration_region_B_lsw;
+    uint32_t average_region_B_msw;
+    uint32_t average_region_B_lsw;
+    uint32_t duration_region_C_msw;
+    uint32_t duration_region_C_lsw;
+    uint32_t average_region_C_msw;
+    uint32_t average_region_C_lsw;
+};
+
+typedef struct audio_avsync_statistics audio_avsync_statistics_t;
+
 /* common audio stream parameters and operations */
 struct audio_stream {
 
@@ -352,6 +371,14 @@ struct audio_broadcast_stream {
      */
     ssize_t (*write)(struct audio_broadcast_stream *stream, const void* buffer,
                      size_t bytes, int64_t timestamp, int audioType);
+    int (*set_avsync_window)(struct audio_broadcast_stream *stream,
+					int windowId, int ws_msw, int ws_lsw, int we_msw, int we_lsw);
+	int (*get_avsync_session_time)(struct audio_broadcast_stream *stream,
+					int *session_msw, int *session_lsw, int *absolute_msw, int *absolute_lsw);
+	int (*get_avsync_inst_statistics)(struct audio_broadcast_stream *stream,
+					audio_avsync_statistics_t *st);
+	int (*get_avsync_cumu_statistics)(struct audio_broadcast_stream *stream,
+					audio_avsync_statistics_t *st);
 
 /* pause audio broadcast stream. Returns status of operation */
     int (*pause)(struct audio_broadcast_stream *stream);
