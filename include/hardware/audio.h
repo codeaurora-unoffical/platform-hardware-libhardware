@@ -142,6 +142,7 @@ struct audio_config {
 };
 
 typedef struct audio_config audio_config_t;
+typedef struct buf_info;
 
 /* common audio stream parameters and operations */
 struct audio_stream {
@@ -297,6 +298,18 @@ struct audio_stream_out {
      */
     int (*set_observer)(const struct audio_stream_out *stream,
                                void *observer);
+    /**
+     * Get the physical address of the buffer allocated in the
+     * driver
+     */
+    int (*get_buffer_info) (const struct audio_stream_out *stream,
+                                struct buf_info **buf);
+    /**
+     * Check if next buffer is available. Waits until next buffer is
+     * available
+     */
+    int (*is_buffer_available) (const struct audio_stream_out *stream,
+                                     int *isAvail);
 
 };
 typedef struct audio_stream_out audio_stream_out_t;
@@ -491,6 +504,14 @@ static inline int audio_hw_device_close(struct audio_hw_device* device)
 {
     return device->common.close(&device->common);
 }
+
+/** Structure to save buffer information for applying effects for
+ *  LPA buffers */
+struct buf_info {
+    int bufsize;
+    int nBufs;
+    int **buffers;
+};
 
 #ifdef __cplusplus
 /**
