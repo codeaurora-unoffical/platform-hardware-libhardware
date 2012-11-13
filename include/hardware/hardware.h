@@ -63,8 +63,14 @@ typedef struct hw_module_t {
     /** major version number for the module */
     uint16_t version_major;
 
+    /** module_api_version define added to maintain compatability with JellyBean code.*/
+#define module_api_version version_major
+
     /** minor version number of the module */
     uint16_t version_minor;
+
+   /** hal_api_version define added to maintain compatability with JellyBean code.*/
+#define hal_api_version version_minor
 
     /** Identifier of module */
     const char *id;
