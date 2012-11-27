@@ -60,7 +60,15 @@ enum {
      * SurfaceFlinger will only honor this flag when the layer has no blending
      *
      */
-    HWC_HINT_CLEAR_FB       = 0x00000002
+    HWC_HINT_CLEAR_FB       = 0x00000002,
+
+    /*
+     * HWC sets the HWC_HINT_DRAW_S3D_SIDE_BY_SIDE and HWC_HINT_DRAW_S3D_TOP_BOTTOM
+     * to tell SurfaceFlinger that currently a S3D video is being drawn so
+     * convert other UI layers to S3D format of video while composing
+     */
+    HWC_HINT_DRAW_S3D_SIDE_BY_SIDE    = 0x00000004,
+    HWC_HINT_DRAW_S3D_TOP_BOTTOM      = 0x00000008
 };
 
 /*
