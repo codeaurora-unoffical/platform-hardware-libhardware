@@ -39,7 +39,7 @@
  *
  * Version history:
  *
- * 2.0: CAMERA_DEVICE_API_VERSION_2_0. Initial release (Android 4.2):
+ * 2.0: Initial release (Android 4.2):
  *      - Sufficient for implementing existing android.hardware.Camera API.
  *      - Allows for ZSL queue in camera service layer
  *      - Not tested for any new features such manual capture control,
