@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 The Android Open Source Project
+ * Copyright (c) 2013 The Linux Foundation. All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -364,6 +365,12 @@ static inline size_t audio_stream_frame_size(const struct audio_stream *s)
 
     if(!s)
         return 0;
+
+    if (audio_is_input_channel(chan_mask)) {
+        chan_mask &= (AUDIO_CHANNEL_IN_STEREO | \
+                      AUDIO_CHANNEL_IN_MONO | \
+                      AUDIO_CHANNEL_IN_5POINT1);
+    }
 
     if(!strncmp(s->get_parameters(s, "voip_flag"),"voip_flag=1",sizeof("voip_flag=1"))) {
         if(format != AUDIO_FORMAT_PCM_8_BIT)
