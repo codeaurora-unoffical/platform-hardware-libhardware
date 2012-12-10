@@ -22,6 +22,7 @@
 #include <strings.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
+#include <string.h>
 
 #include <cutils/bitops.h>
 
@@ -358,8 +359,20 @@ typedef struct audio_stream_in audio_stream_in_t;
 static inline size_t audio_stream_frame_size(const struct audio_stream *s)
 {
     size_t chan_samp_sz;
+    uint32_t chan_mask = s->get_channels(s);
+    int format = s->get_format(s);
 
-    switch (s->get_format(s)) {
+    if(!s)
+        return 0;
+
+    if(!strncmp(s->get_parameters(s, "voip_flag"),"voip_flag=1",sizeof("voip_flag=1"))) {
+        if(format != AUDIO_FORMAT_PCM_8_BIT)
+            return popcount(chan_mask) * sizeof(int16_t);
+        else
+            return popcount(chan_mask) * sizeof(int8_t);
+    }
+
+    switch (format) {
     case AUDIO_FORMAT_AMR_NB:
         chan_samp_sz = 32;
         break;
@@ -381,7 +394,7 @@ static inline size_t audio_stream_frame_size(const struct audio_stream *s)
         break;
     }
 
-    return popcount(s->get_channels(s)) * chan_samp_sz;
+    return popcount(chan_mask) * chan_samp_sz;
 }
 
 
