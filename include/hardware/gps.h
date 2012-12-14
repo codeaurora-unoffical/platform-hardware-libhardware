@@ -140,6 +140,10 @@ typedef int16_t AGpsType;
 #define AGPS_TYPE_SUPL          1
 #define AGPS_TYPE_C2K           2
 #define AGPS_TYPE_WWAN_ANY      3
+#define AGPS_TYPE_WIFI          4
+
+/** SSID length */
+#define SSID_BUF_SIZE (32+1)
 
 typedef uint16_t AGpsSetIDType;
 #define AGPS_SETID_TYPE_NONE    0
@@ -494,6 +498,8 @@ typedef struct {
     AGpsStatusValue status;
     uint32_t        ipv4_addr;
     char            ipv6_addr[16];
+    char            ssid[SSID_BUF_SIZE];
+    char            password[SSID_BUF_SIZE];
 } AGpsStatus;
 
 /** Callback with AGPS status information.
