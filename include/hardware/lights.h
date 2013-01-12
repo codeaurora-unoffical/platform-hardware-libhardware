@@ -40,6 +40,7 @@ __BEGIN_DECLS
 #define LIGHT_ID_KEYBOARD           "keyboard"
 #define LIGHT_ID_BUTTONS            "buttons"
 #define LIGHT_ID_BATTERY            "battery"
+#define LIGHT_ID_LOW_BATTERY        "low_battery"
 #define LIGHT_ID_NOTIFICATIONS      "notifications"
 #define LIGHT_ID_ATTENTION          "attention"
 
