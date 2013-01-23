@@ -133,6 +133,9 @@ __BEGIN_DECLS
 
 /* Query if a2dp  is supported */
 #define AUDIO_PARAMETER_KEY_HANDLE_A2DP_DEVICE "isA2dpDeviceSupported"
+
+/* Query ADSP Status */
+#define AUDIO_PARAMETER_KEY_ADSP_STATUS "ADSP_STATUS"
 /**************************************/
 
 /* common audio stream configuration parameters */
