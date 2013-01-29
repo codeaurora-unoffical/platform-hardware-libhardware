@@ -350,6 +350,8 @@ static inline size_t audio_stream_frame_size(struct audio_stream *s)
     size_t chan_samp_sz;
     uint32_t chan_mask = s->get_channels(s);
     int format = s->get_format(s);
+    char *tmpparam;
+    int isParamEqual;
 
     if (audio_is_input_channel(chan_mask)) {
         chan_mask &= (AUDIO_CHANNEL_IN_STEREO | \
@@ -357,7 +359,10 @@ static inline size_t audio_stream_frame_size(struct audio_stream *s)
                       AUDIO_CHANNEL_IN_5POINT1);
     }
 
-    if(!strcmp(s->get_parameters(s, "voip_flag"),"voip_flag=1")) {
+    tmpparam = s->get_parameters(s, "voip_flag");
+    isParamEqual = !strcmp(tmpparam,"voip_flag=1");
+    free(tmpparam);
+    if(isParamEqual) {
         if(format != AUDIO_FORMAT_PCM_8_BIT)
             return popcount(chan_mask) * sizeof(int16_t);
         else
