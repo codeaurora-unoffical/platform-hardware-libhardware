@@ -46,6 +46,19 @@ __BEGIN_DECLS
     else \
         status = 0;\
 }
+#define IS_SOUND_DRIVER_MPQ(status) \
+{ \
+    FILE *fp; \
+    char soundCardInfo[200]; \
+    if((fp = fopen("/proc/asound/cards","r")) != NULL) { \
+        while((fgets(soundCardInfo, sizeof(soundCardInfo), fp) != NULL)) { \
+            if (strstr(soundCardInfo, "mpq8064-tabla-snd-card")) { \
+                status = 1; \
+            } \
+        } \
+        fclose(fp); \
+    } \
+}
 #define HARDWARE_MAKE_API_VERSION(maj,min) \
             ((((maj) & 0xff) << 8) | ((min) & 0xff))
 
