@@ -127,9 +127,7 @@ int hw_get_module_by_class(const char *class_id, const char *inst,
     char path[PATH_MAX];
     char name[PATH_MAX];
     int is_mpq;
-    int is_mpq_sound;
     IS_TARGET_MPQ(is_mpq);
-    IS_SOUND_DRIVER_MPQ(is_mpq_sound);
 
     if (inst)
         snprintf(name, PATH_MAX, "%s.%s", class_id, inst);
@@ -155,7 +153,7 @@ int hw_get_module_by_class(const char *class_id, const char *inst,
 
             if ((!strncmp(name, "audio.primary", 13) ||
                 !strncmp(name, "audio_policy", 12)) &&
-                (is_mpq || is_mpq_sound) && (!strncmp(prop, "msm8960", 7)))
+                (is_mpq ) && (!strncmp(prop, "msm8960", 7)))
             {
                 strlcpy(prop, "mpq8064", 8);
                 ALOGE("setting prop to mpq8064");
