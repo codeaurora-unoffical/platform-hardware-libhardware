@@ -51,7 +51,7 @@ typedef struct {
 
 /** Bluetooth Device Name */
 typedef struct {
-    uint8_t name[248];
+    uint8_t name[249];
 } __attribute__((packed))bt_bdname_t;
 
 /** Bluetooth Adapter Visibility Modes*/
