@@ -108,8 +108,8 @@ typedef struct hw_module_t {
      * versions as arguments and would be able to reject modules with
      * versions outside of the supplied range.
      */
-    uint16_t module_api_version;
-#define version_major module_api_version
+    uint16_t version_major;
+#define module_api_version version_major
     /**
      * version_major/version_minor defines are supplied here for temporary
      * source code compatibility. They will be removed in the next version.
@@ -126,8 +126,8 @@ typedef struct hw_module_t {
      *
      * Presently, 0 is the only valid value.
      */
-    uint16_t hal_api_version;
-#define version_minor hal_api_version
+    uint16_t version_minor;
+#define hal_api_version version_minor
 
     /** Identifier of module */
     const char *id;
