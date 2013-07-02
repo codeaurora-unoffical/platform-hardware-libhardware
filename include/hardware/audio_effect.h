@@ -910,7 +910,7 @@ typedef struct audio_effect_library_s {
     //        *pNumEffects:     updated with number of effects in library
     //
     ////////////////////////////////////////////////////////////////////////////////
-    int32_t (*query_num_effects)(uint32_t *pNumEffects);
+    /*int32_t (*query_num_effects)(uint32_t *pNumEffects);*/
 
     ////////////////////////////////////////////////////////////////////////////////
     //
@@ -939,8 +939,8 @@ typedef struct audio_effect_library_s {
     //        *pDescriptor:     updated with the effect descriptor.
     //
     ////////////////////////////////////////////////////////////////////////////////
-    int32_t (*query_effect)(uint32_t index,
-                            effect_descriptor_t *pDescriptor);
+    /*int32_t (*query_effect)(uint32_t index,
+                            effect_descriptor_t *pDescriptor);*/
 
     ////////////////////////////////////////////////////////////////////////////////
     //

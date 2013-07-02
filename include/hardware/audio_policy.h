@@ -232,6 +232,9 @@ struct audio_policy {
     bool (*is_stream_active)(const struct audio_policy *pol,
                              audio_stream_type_t stream,
                              uint32_t in_past_ms);
+    bool (*is_stream_active_remotely)(const struct audio_policy *pol,
+            audio_stream_type_t stream,
+            uint32_t in_past_ms);
 
     bool (*is_source_active)(const struct audio_policy *pol,
                              audio_source_t source);
@@ -367,7 +370,7 @@ struct audio_policy_service_ops {
                         audio_io_handle_t src_output,
                         audio_io_handle_t dst_output);
 
-    /* set fm audio volume. */
+     /*set fm audio volume. */
     int (*set_fm_volume)(void *service,
                          float volume,
                          int delay_ms);
