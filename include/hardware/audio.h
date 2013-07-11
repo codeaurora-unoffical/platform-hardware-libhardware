@@ -448,6 +448,7 @@ struct audio_module {
     struct hw_module_t common;
 };
 
+typedef void (*cb_func_ptr)(void* private_data);
 struct audio_hw_device {
     struct hw_device_t common;
 
@@ -532,7 +533,9 @@ struct audio_hw_device {
                                  int format, uint32_t channels,
                                  uint32_t sample_rate,
                                  uint32_t audio_source,
-                                 struct audio_broadcast_stream **out);
+                                 struct audio_broadcast_stream **out,
+                                 cb_func_ptr cb,
+                                 void* private_data);
 
     void (*close_broadcast_stream)(struct audio_hw_device *dev,
                                    struct audio_broadcast_stream *out);
