@@ -52,7 +52,7 @@ typedef struct {
 
 /** Bluetooth Device Name */
 typedef struct {
-    uint8_t name[248];
+    uint8_t name[249];
 } __attribute__((packed))bt_bdname_t;
 
 /** Bluetooth Adapter Visibility Modes*/
@@ -115,6 +115,15 @@ typedef struct
    uint16_t channel;
    char name[256]; // what's the maximum length
 } bt_service_record_t;
+
+
+/** Bluetooth Remote Version info */
+typedef struct
+{
+   int version;
+   int sub_ver;
+   int manufacturer;
+} bt_remote_version_t;
 
 /* Bluetooth Adapter and Remote Device property types */
 typedef enum {
@@ -190,6 +199,13 @@ typedef enum {
      * Data type   - int32_t.
      */
     BT_PROPERTY_REMOTE_RSSI,
+    /**
+     * Description - Remote version info
+     * Access mode - SET/GET.
+     * Data type   - bt_remote_version_t.
+     */
+
+    BT_PROPERTY_REMOTE_VERSION_INFO,
 
     BT_PROPERTY_REMOTE_DEVICE_TIMESTAMP = 0xFF,
 } bt_property_type_t;
@@ -430,6 +446,10 @@ typedef struct {
 
     /* Send any test HCI (vendor-specific) command to the controller. Must be in DUT Mode */
     int (*dut_mode_send)(uint16_t opcode, uint8_t *buf, uint8_t len);
+    /** BLE Test Mode APIs */
+    /* opcode MUST be one of: LE_Receiver_Test, LE_Transmitter_Test, LE_Test_End */
+    int (*le_test_mode)(uint16_t opcode, uint8_t *buf, uint8_t len);
+
 } bt_interface_t;
 
 /** TODO: Need to add APIs for Service Discovery, Service authorization and
