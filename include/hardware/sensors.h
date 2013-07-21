@@ -26,6 +26,13 @@
 
 __BEGIN_DECLS
 
+/*****************************************************************************/
+
+#define SENSORS_HEADER_VERSION          1
+#define SENSORS_MODULE_API_VERSION_0_1  HARDWARE_MODULE_API_VERSION(0, 1)
+#define SENSORS_DEVICE_API_VERSION_0_1  HARDWARE_DEVICE_API_VERSION_2(0, 1, SENSORS_HEADER_VERSION)
+#define SENSORS_DEVICE_API_VERSION_1_0  HARDWARE_DEVICE_API_VERSION_2(1, 0, SENSORS_HEADER_VERSION)
+
 /**
  * The id of this module
  */
@@ -302,6 +309,58 @@ __BEGIN_DECLS
  * sensor is enabled.
  *
  */
+
+/*
+ * SENSOR_TYPE_SIGNIFICANT_MOTION
+ * trigger-mode: one-shot
+ * wake-up sensor: yes
+ *
+ * A sensor of this type triggers an event each time significant motion
+ * is detected and automatically disables itself.
+ * The only allowed value to return is 1.0.
+ *
+ * A significant motion is a motion that might lead to a change in the user
+ * location.
+ * Examples of such motions are:
+ *   walking, biking, sitting in a moving car, coach or train.
+ * Examples of situations that should not trigger significant motion:
+ * - phone in pocket and person is not moving
+ * - phone is on a table, even if the table shakes a bit due to nearby traffic
+ *   or washing machine
+ *
+ * A note on false positive / false negative / power consumption tradeoff
+ *  - The goal of this sensor is to save power.
+ *  - Triggering an event when the user is not moving (false positive) is costly
+ *    in terms of power, so it should be avoided.
+ *  - Not triggering an event when the user is moving (false negative) is
+ *    acceptable as long as it is not done repeatedly. If the user has been
+ *    walking for 10 seconds, not triggering an event within those 10 seconds
+ *    is not acceptable.
+ *
+ *  IMPORTANT NOTE: this sensor type is very different from other types
+ *  in that it must work when the screen is off without the need of
+ *  holding a partial wake-lock and MUST allow the SoC to go into suspend.
+ *  When significant motion is detected, the sensor must awaken the SoC and
+ *  the event be reported.
+ *
+ *  If a particular hardware cannot support this mode of operation then this
+ *  sensor type MUST NOT be reported by the HAL. ie: it is not acceptable
+ *  to "emulate" this sensor in the HAL.
+ *
+ *  The whole point of this sensor type is to save power by keeping the
+ *  SoC in suspend mode when the device is at rest.
+ *
+ *  When the sensor is not activated, it must also be deactivated in the
+ *  hardware: it must not wake up the SoC anymore, even in case of
+ *  significant motion.
+ *
+ *  setDelay() has no effect and is ignored.
+ *  Once a "significant motion" event is returned, a sensor of this type
+ *  must disables itself automatically, as if activate(..., 0) had been called.
+ */
+
+#define SENSOR_TYPE_SIGNIFICANT_MOTION              (17)
+
 
 typedef struct {
     union {
