@@ -500,6 +500,7 @@ typedef struct {
     char            ipv6_addr[16];
     char            ssid[SSID_BUF_SIZE];
     char            password[SSID_BUF_SIZE];
+    uint32_t        ipaddr;
 } AGpsStatus;
 
 /** Callback with AGPS status information.
@@ -525,19 +526,18 @@ typedef struct {
      */
     void  (*init)( AGpsCallbacks* callbacks );
     /**
-     * Notifies that a data connection is available and sets
+     * Notifies that a data connection is available and sets 
      * the name of the APN to be used for SUPL.
      */
-    int  (*data_conn_open)( AGpsType agpsType,
-                            const char* apn, AGpsBearerType bearerType );
+    int  (*data_conn_open)( const char* apn );
     /**
      * Notifies that the AGPS data connection has been closed.
      */
-    int  (*data_conn_closed)( AGpsType agpsType );
+    int  (*data_conn_closed)();
     /**
-     * Notifies that a data connection is not available for AGPS.
+     * Notifies that a data connection is not available for AGPS. 
      */
-    int  (*data_conn_failed)(AGpsType  agpsType );
+    int  (*data_conn_failed)();
     /**
      * Sets the hostname and port for the AGPS server.
      */
