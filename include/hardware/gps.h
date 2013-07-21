@@ -136,7 +136,7 @@ typedef uint32_t GpsAidingData;
 #define GPS_DELETE_ALL                           0xFFFFFFFF
 
 /** AGPS type */
-typedef int16_t AGpsType;
+typedef uint16_t AGpsType;
 #define AGPS_TYPE_INVALID       -1
 #define AGPS_TYPE_ANY           0
 #define AGPS_TYPE_SUPL          1
