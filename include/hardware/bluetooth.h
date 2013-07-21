@@ -42,8 +42,7 @@ __BEGIN_DECLS
 #define BT_PROFILE_SOCKETS_ID "socket"
 #define BT_PROFILE_HIDHOST_ID "hidhost"
 #define BT_PROFILE_PAN_ID "pan"
-#define BT_PROFILE_GATT_ID "gatt"
-#define BT_PROFILE_AV_RC_ID "avrcp"
+
 
 /** Bluetooth Address */
 typedef struct {
@@ -316,10 +315,6 @@ typedef void (*callback_thread_event)(bt_cb_thread_evt evt);
 /* Receive any HCI event from controller. Must be in DUT Mode for this callback to be received */
 typedef void (*dut_mode_recv_callback)(uint16_t opcode, uint8_t *buf, uint8_t len);
 
-/* LE Test mode callbacks
-* This callback shall be invoked whenever the le_tx_test, le_rx_test or le_test_end is invoked
-* The num_packets is valid only for le_test_end command */
-typedef void (*le_test_mode_callback)(bt_status_t status, uint16_t num_packets);
 /** TODO: Add callbacks for Link Up/Down and other generic
   *  notifications/callbacks */
 
@@ -338,7 +333,6 @@ typedef struct {
     acl_state_changed_callback acl_state_changed_cb;
     callback_thread_event thread_evt_cb;
     dut_mode_recv_callback dut_mode_recv_cb;
-    le_test_mode_callback le_test_mode_cb;
 } bt_callbacks_t;
 
 /** NOTE: By default, no profiles are initialized at the time of init/enable.
