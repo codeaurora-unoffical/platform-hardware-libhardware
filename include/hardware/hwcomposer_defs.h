@@ -191,6 +191,7 @@ enum {
 enum {
     HWC_DISPLAY_PRIMARY     = 0,
     HWC_DISPLAY_EXTERNAL    = 1,    // HDMI, DP, etc.
+    HWC_DISPLAY_VIRTUAL     = 2,    // WFD etc.
     HWC_NUM_DISPLAY_TYPES
 };
 
