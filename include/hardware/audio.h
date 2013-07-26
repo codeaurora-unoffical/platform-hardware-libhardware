@@ -404,6 +404,12 @@ struct audio_broadcast_stream {
 	int (*get_avsync_cumu_statistics)(struct audio_broadcast_stream *stream,
 					audio_avsync_statistics_t *st);
 
+/* pause audio broadcast stream. Returns status of operation */
+    int (*pause)(struct audio_broadcast_stream *stream);
+
+/* resume audio broadcast stream. Returns status of operation */
+    int (*resume)(struct audio_broadcast_stream *stream);
+
 };
 typedef struct audio_broadcast_stream audio_broadcast_stream_t;
 
