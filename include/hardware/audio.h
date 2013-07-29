@@ -353,6 +353,12 @@ struct audio_broadcast_stream {
     ssize_t (*write)(struct audio_broadcast_stream *stream, const void* buffer,
                      size_t bytes, int64_t timestamp, int audioType);
 
+/* pause audio broadcast stream. Returns status of operation */
+    int (*pause)(struct audio_broadcast_stream *stream);
+
+/* resume audio broadcast stream. Returns status of operation */
+    int (*resume)(struct audio_broadcast_stream *stream);
+
 };
 typedef struct audio_broadcast_stream audio_broadcast_stream_t;
 
