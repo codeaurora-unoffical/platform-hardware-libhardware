@@ -153,6 +153,19 @@ typedef uint32_t GpsAidingData;
 #define GPS_DELETE_ALMANAC_CORR_GLO              0x00040000
 #define GPS_DELETE_TIME_GPS                      0x00080000
 #define GPS_DELETE_TIME_GLO                      0x00100000
+#define GLO_DELETE_EPHEMERIS                     0x00004000
+#define GLO_DELETE_ALMANAC                       0x00008000
+#define GLO_DELETE_SVDIR                         0x00010000
+#define GLO_DELETE_SVSTEER                       0x00020000
+#define GLO_DELETE_ALMANAC_CORR                  0x00040000
+#define GPS_DELETE_TIME_GPS                      0x00080000
+#define GLO_DELETE_TIME                          0x00100000
+#define BDS_DELETE_SVDIR                         0X00200000
+#define BDS_DELETE_SVSTEER                       0X00400000
+#define BDS_DELETE_TIME                          0X00800000
+#define BDS_DELETE_ALMANAC_CORR                  0X01000000
+#define BDS_DELETE_EPHEMERIS                     0X02000000
+#define BDS_DELETE_ALMANAC                       0X04000000
 
 #define GPS_DELETE_ALL                           0xFFFFFFFF
 
