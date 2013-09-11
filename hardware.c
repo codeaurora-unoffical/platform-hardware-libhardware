@@ -144,7 +144,10 @@ int hw_get_module_by_class(const char *class_id, const char *inst,
         if (i < HAL_VARIANT_KEYS_COUNT) {
             if (property_get(variant_keys[i], prop, NULL) == 0) {
                 continue;
-            }
+            } else {
+		if (!strcmp(prop, "msm8228"))
+			sprintf(prop, "msm8226");
+	    }
             snprintf(path, sizeof(path), "%s/%s.%s.so",
                      HAL_LIBRARY_PATH2, name, prop);
             if (access(path, R_OK) == 0) break;
