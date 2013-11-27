@@ -159,6 +159,9 @@ __BEGIN_DECLS
 /* Query ADSP Status */
 #define AUDIO_PARAMETER_KEY_ADSP_STATUS "ADSP_STATUS"
 
+/* Query Sound Card Status */
+#define AUDIO_PARAMETER_KEY_SND_CARD_STATUS "SND_CARD_STATUS"
+
 /* Query if Proxy can be Opend */
 #define AUDIO_PARAMETER_KEY_CAN_OPEN_PROXY "can_open_proxy"
 
@@ -441,61 +444,13 @@ static inline size_t audio_stream_frame_size(const struct audio_stream *s)
 {
     size_t chan_samp_sz;
     audio_format_t format = s->get_format(s);
-    uint32_t chan_mask = s->get_channels(s);
-    if(audio_is_output_channel(chan_mask)) {
-        if (audio_is_linear_pcm(format) &&
-                format != AUDIO_FORMAT_PCM_8_24_BIT) {
-            chan_samp_sz = audio_bytes_per_sample(format);
-            return popcount(s->get_channels(s)) * chan_samp_sz;
-        }
-        return sizeof(int8_t);
 
-    } else if (audio_is_input_channel(chan_mask)) {
-
-        char *tmpparam;
-        int isParamEqual;
-
-        if(!s)
-            return 0;
-
-        chan_mask &= (AUDIO_CHANNEL_IN_STEREO | \
-                      AUDIO_CHANNEL_IN_MONO | \
-                      AUDIO_CHANNEL_IN_5POINT1);
-
-        tmpparam = s->get_parameters(s, "voip_flag");
-        isParamEqual = !strncmp(tmpparam,"voip_flag=1", sizeof("voip_flag=1"));
-        free(tmpparam);
-        if(isParamEqual) {
-            if(format != AUDIO_FORMAT_PCM_8_BIT)
-                return popcount(chan_mask) * sizeof(int16_t);
-            else
-                return popcount(chan_mask) * sizeof(int8_t);
-        }
-
-        switch (format) {
-
-        case AUDIO_FORMAT_AMR_NB:
-            chan_samp_sz = 32;
-            break;
-        case AUDIO_FORMAT_EVRC:
-            chan_samp_sz = 23;
-            break;
-        case AUDIO_FORMAT_QCELP:
-            chan_samp_sz = 35;
-            break;
-        case AUDIO_FORMAT_AMR_WB:
-            chan_samp_sz = 61;
-            break;
-        case AUDIO_FORMAT_PCM_16_BIT:
-            chan_samp_sz = sizeof(int16_t);
-            break;
-        case AUDIO_FORMAT_PCM_8_BIT:
-        default:
-            chan_samp_sz = sizeof(int8_t);
-            break;
-        }
-        return popcount(chan_mask) * chan_samp_sz;
+    if (audio_is_linear_pcm(format) &&
+            format != AUDIO_FORMAT_PCM_8_24_BIT) {
+        chan_samp_sz = audio_bytes_per_sample(format);
+        return popcount(s->get_channels(s)) * chan_samp_sz;
     }
+    return sizeof(int8_t);
 }
 
 
