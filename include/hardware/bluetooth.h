@@ -124,6 +124,12 @@ typedef struct
    char name[256]; // what's the maximum length
 } bt_service_record_t;
 
+/** Bluetooth service UUID info  */
+typedef struct
+{
+    uint8_t   uuidtype;
+    bt_uuid_t uuidval;
+} bt_le_service_t;
 
 /** Bluetooth Remote Version info */
 typedef struct
@@ -292,6 +298,8 @@ typedef void (*device_found_callback)(int num_properties,
 /** Discovery state changed callback */
 typedef void (*discovery_state_changed_callback)(bt_discovery_state_t state);
 
+/** wake state changed callback */
+typedef void (*wake_state_changed_callback)(bt_state_t state);
 /** Bluetooth Legacy PinKey Request callback */
 typedef void (*pin_request_callback)(bt_bdaddr_t *remote_bd_addr,
                                         bt_bdname_t *bd_name, uint32_t cod, uint8_t secure);
@@ -316,6 +324,23 @@ typedef void (*bond_state_changed_callback)(bt_status_t status,
 /** Bluetooth ACL connection state changed callback */
 typedef void (*acl_state_changed_callback)(bt_status_t status, bt_bdaddr_t *remote_bd_addr,
                                             bt_acl_state_t state);
+
+typedef void (*le_extended_scan_result_callback)(bt_bdaddr_t* bda, int rssi, uint8_t* adv_data);
+
+/**  Callback invoked when write rssi threshold command complete */
+typedef void (*le_lpp_write_rssi_thresh_callback) (bt_bdaddr_t *bda, int status);
+
+/**  Callback invoked when read rssi threshold command complete */
+typedef void (*le_lpp_read_rssi_thresh_callback)(bt_bdaddr_t *bda, int low, int upper,
+                                                 int alert, int status);
+
+/**  Callback invoked when enable or disable rssi monitor command complete */
+typedef void (*le_lpp_enable_rssi_monitor_callback)(bt_bdaddr_t *bda,
+                                                    int enable, int status);
+
+/**  Callback triggered when rssi threshold event reported */
+typedef void (*le_lpp_rssi_threshold_evt_callback)(bt_bdaddr_t *bda,
+                                                   int evt_type, int rssi);
 
 typedef enum {
     ASSOCIATE_JVM,
@@ -347,6 +372,7 @@ typedef struct {
     remote_device_properties_callback remote_device_properties_cb;
     device_found_callback device_found_cb;
     discovery_state_changed_callback discovery_state_changed_cb;
+    wake_state_changed_callback wake_state_changed_cb;
     pin_request_callback pin_request_cb;
     ssp_request_callback ssp_request_cb;
     bond_state_changed_callback bond_state_changed_cb;
@@ -354,6 +380,11 @@ typedef struct {
     callback_thread_event thread_evt_cb;
     dut_mode_recv_callback dut_mode_recv_cb;
     le_test_mode_callback le_test_mode_cb;
+    le_extended_scan_result_callback le_extended_scan_result_cb;
+    le_lpp_write_rssi_thresh_callback          le_lpp_write_rssi_thresh_cb;
+    le_lpp_read_rssi_thresh_callback           le_lpp_read_rssi_thresh_cb;
+    le_lpp_enable_rssi_monitor_callback        le_lpp_enable_rssi_monitor_cb;
+    le_lpp_rssi_threshold_evt_callback         le_lpp_rssi_threshold_evt_cb;
 } bt_callbacks_t;
 
 /** NOTE: By default, no profiles are initialized at the time of init/enable.
@@ -384,6 +415,9 @@ typedef struct {
      * to the implemenation of this interface.
      */
     int (*init)(bt_callbacks_t* callbacks );
+
+    /*adds callbacks for QC related calls to the btif env*/
+    int (*initq)(bt_callbacks_t* callbacks);
 
     /** Enable Bluetooth. */
     int (*enable)(void);
@@ -467,6 +501,14 @@ typedef struct {
 
     /* enable or disable bluetooth HCI snoop log */
     int (*config_hci_snoop_log)(uint8_t enable);
+    /** Scan with filter: white list, advertising data based white list, or both*/
+    bt_status_t (*le_extended_scan)(bt_le_service_t service_list[], int entries,
+                                    uint8_t scan_policy, int start);
+    /** rssi monitoring */
+    bt_status_t (*le_lpp_write_rssi_threshold)(const bt_bdaddr_t *remote_bda, char min, char max);
+    bt_status_t (*le_lpp_enable_rssi_monitor)(const bt_bdaddr_t *remote_bda, int enable);
+    bt_status_t (*le_lpp_read_rssi_threshold)(const bt_bdaddr_t *remote_bda);
+
 } bt_interface_t;
 
 /** TODO: Need to add APIs for Service Discovery, Service authorization and
