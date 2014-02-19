@@ -212,7 +212,7 @@ static ssize_t out_write(struct audio_stream_out *stream, const void* buffer,
     pthread_mutex_unlock(&out->lock);
     pthread_mutex_unlock(&out->dev->lock);
 
-    return ret? ret: bytes;
+    return ret == 0 ? bytes : ret;
 
 err:
     ALOGE("out_write() ERR");
