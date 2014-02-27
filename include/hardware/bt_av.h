@@ -87,8 +87,11 @@ typedef struct {
      */
     bt_status_t (*init)( btav_callbacks_t* callbacks );
 
-    /** connect to headset */
-    bt_status_t (*connect)( bt_bdaddr_t *bd_addr );
+    /** connect to headset, local device SRC */
+    bt_status_t (*connect_src)( bt_bdaddr_t *bd_addr );
+
+    /** connect to headset, local device SINK */
+    bt_status_t (*connect_sink)( bt_bdaddr_t *bd_addr );
 
     /** dis-connect from headset */
     bt_status_t (*disconnect)( bt_bdaddr_t *bd_addr );
