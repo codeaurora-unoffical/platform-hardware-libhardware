@@ -14,7 +14,6 @@ LOCAL_CFLAGS  += -DQEMU_HARDWARE
 QEMU_HARDWARE := true
 
 LOCAL_SHARED_LIBRARIES += libdl
-
 LOCAL_SRC_FILES += hardware.c
 
 LOCAL_MODULE:= libhardware
