@@ -346,6 +346,9 @@ typedef struct {
 
     /** Closes the interface. */
     void (*cleanup)(void);
+
+    /** Send AT Command. */
+    bt_status_t (*send_at_cmd) (int cmd, int val1, int val2, const char *arg);
 } bthf_client_interface_t;
 
 __END_DECLS
