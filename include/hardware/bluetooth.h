@@ -543,6 +543,9 @@ typedef struct {
     bt_status_t (*le_lpp_enable_rssi_monitor)(const bt_bdaddr_t *remote_bda, int enable);
     bt_status_t (*le_lpp_read_rssi_threshold)(const bt_bdaddr_t *remote_bda);
 
+    int (*le_send_conn_update)(bt_bdaddr_t *remote_bda, uint16_t interval_min, uint16_t interval_max,
+                               uint16_t latency, uint16_t supervision_timeout);
+
     /** BT stack Test interface */
     const void* (*get_testapp_interface)(int test_app_profile);
 } bt_interface_t;
