@@ -356,6 +356,11 @@ typedef void (*le_lpp_enable_rssi_monitor_callback)(bt_bdaddr_t *bda,
 /**  Callback triggered when rssi threshold event reported */
 typedef void (*le_lpp_rssi_threshold_evt_callback)(bt_bdaddr_t *bda,
                                                    int evt_type, int rssi);
+/**  Callback triggered for BLE conn parameters */
+typedef void (*ble_conn_params_callback)(uint8_t status, bt_bdaddr_t *remote_bd_addr,
+                                         uint16_t conn_interval_min, uint16_t conn_interval_max,
+                                         uint16_t conn_latency, uint16_t supervision_timeout,
+                                         uint8_t evt);
 
 typedef enum {
     ASSOCIATE_JVM,
@@ -406,6 +411,7 @@ typedef struct {
     le_lpp_read_rssi_thresh_callback           le_lpp_read_rssi_thresh_cb;
     le_lpp_enable_rssi_monitor_callback        le_lpp_enable_rssi_monitor_cb;
     le_lpp_rssi_threshold_evt_callback         le_lpp_rssi_threshold_evt_cb;
+    ble_conn_params_callback ble_conn_params_cb;
 } bt_callbacks_t;
 
 /** NOTE: By default, no profiles are initialized at the time of init/enable.
@@ -448,6 +454,9 @@ typedef struct {
 
     /** Closes the interface. */
     void (*cleanup)(void);
+
+    /** SSR cleanup. */
+    void (*ssrcleanup)(void);
 
     /** Get all Bluetooth Adapter properties at init */
     int (*get_adapter_properties)(void);
@@ -543,6 +552,9 @@ typedef struct {
     bt_status_t (*le_lpp_write_rssi_threshold)(const bt_bdaddr_t *remote_bda, char min, char max);
     bt_status_t (*le_lpp_enable_rssi_monitor)(const bt_bdaddr_t *remote_bda, int enable);
     bt_status_t (*le_lpp_read_rssi_threshold)(const bt_bdaddr_t *remote_bda);
+
+    int (*le_send_conn_update)(bt_bdaddr_t *remote_bda, uint16_t interval_min, uint16_t interval_max,
+                               uint16_t latency, uint16_t supervision_timeout);
 
     /** BT stack Test interface */
     const void* (*get_testapp_interface)(int test_app_profile);
