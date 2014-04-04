@@ -110,6 +110,9 @@ typedef struct {
 
     /** Send audio focus status to bluedroid*/
     void (*audio_focus_status)( int is_enable );
+
+    /** Activate/Deactivate A2DP Sink */
+    void (*activate_sink)( int enable );
 } btav_interface_t;
 
 __END_DECLS
