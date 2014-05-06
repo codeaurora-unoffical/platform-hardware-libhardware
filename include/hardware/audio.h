@@ -149,6 +149,9 @@ __BEGIN_DECLS
 
 /* Query Fluence type */
 #define AUDIO_PARAMETER_KEY_FLUENCE "fluence"
+#define AUDIO_PARAMETER_VALUE_QUADMIC "quadmic"
+#define AUDIO_PARAMETER_VALUE_DUALMIC "dualmic"
+#define AUDIO_PARAMETER_KEY_NO_FLUENCE "none"
 
 /* Query if surround sound recording is supported */
 #define AUDIO_PARAMETER_KEY_SSR "ssr"
