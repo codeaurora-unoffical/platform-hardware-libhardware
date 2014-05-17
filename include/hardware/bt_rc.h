@@ -26,6 +26,7 @@ __BEGIN_DECLS
 #define BTRC_MAX_FOLDER_DEPTH       4
 #define BTRC_MAX_APP_ATTR_SIZE      16
 #define BTRC_MAX_ELEM_ATTR_SIZE     7
+#define BTRC_CHARSET_UTF8           0x006A
 
 typedef uint8_t btrc_uid_t[BTRC_UID_SIZE];
 
@@ -52,6 +53,7 @@ typedef enum {
     BTRC_EVT_TRACK_REACHED_START = 0x04,
     BTRC_EVT_PLAY_POS_CHANGED = 0x05,
     BTRC_EVT_APP_SETTINGS_CHANGED = 0x08,
+    BTRC_EVT_NOW_PLAYING_CONTENT_CHANGED = 0x09,
     BTRC_EVT_AVAILABLE_PLAYERS_CHANGED = 0x0a,
     BTRC_EVT_ADDRESSED_PLAYER_CHANGED = 0x0b,
 } btrc_event_id_t;
@@ -109,6 +111,12 @@ typedef enum {
     BTRC_STS_NO_ERROR       = 0x04  /* Operation Success */
 } btrc_status_t;
 
+typedef enum {
+    BTRC_TYPE_MEDIA_PLAYER = 0x01,
+    BTRC_TYPE_FOLDER = 0x02,
+    BTRC_TYPE_MEDIA_ELEMENT = 0x03
+} btrc_folder_list_item_type_t;
+
 typedef struct {
     uint8_t num_attr;
     uint8_t attr_ids[BTRC_MAX_APP_SETTINGS];
@@ -119,6 +127,8 @@ typedef struct {
     uint32_t start_item;
     uint32_t end_item;
     uint32_t size;
+    uint32_t attrs[BTRC_MAX_ELEM_ATTR_SIZE];
+    uint8_t  attr_count;
 }btrc_getfolderitem_t;
 
 typedef union
@@ -155,9 +165,9 @@ typedef struct {
 
 typedef struct
 {
+    uint32_t              sub_type;
     uint16_t              player_id;
     uint8_t               major_type;
-    uint32_t              sub_type;
     uint8_t               play_status;
     btrc_feature_mask_t   features;       /* Supported feature bit mask*/
     btrc_player_full_name_t     name;           /* The player name, name length and character set id.*/
@@ -165,16 +175,60 @@ typedef struct
 
 typedef struct
 {
+    uint64_t                    uid;
+    uint8_t                     type;
+    uint8_t                     playable;
+    btrc_player_full_name_t     name;
+} btrc_folder_list_item_folder_t;
+
+typedef struct
+{
+    uint32_t                    attr_id;
+    btrc_player_full_name_t     name;
+} btrc_attr_entry_t;
+
+typedef struct
+{
+    uint64_t                    uid;
+    uint8_t                     type;
+    uint8_t                     attr_count;
+    btrc_player_full_name_t     name;
+    btrc_attr_entry_t*          p_attr_list;
+} btrc_folder_list_item_media_t;
+
+typedef struct {
+    uint16_t              str_len;
+    uint8_t               *p_str;
+} btrc_name_t;
+
+/* SetBrowsedPlayer */
+typedef struct
+{
+    uint32_t              num_items;
+    uint16_t              uid_counter;
+    uint16_t              charset_id;
+    uint8_t               status;
+    uint8_t               folder_depth;
+    btrc_name_t           *p_folders;
+} btrc_set_browsed_player_rsp_t;
+
+typedef struct
+{
     uint8_t                          item_type;
-    btrc_folder_list_item_player_t   player;
+    union
+    {
+        btrc_folder_list_item_player_t   player;
+        btrc_folder_list_item_folder_t   folder;
+        btrc_folder_list_item_media_t    media;
+    } u;
 } btrc_folder_list_item_t;
 
 /* GetFolderItems */
 typedef struct
 {
-    uint8_t                   status;
     uint16_t                  uid_counter;
     uint16_t                  item_count;
+    uint8_t                   status;
     btrc_folder_list_item_t   *p_item_list;
 } btrc_folder_list_entries_t;
 
@@ -226,11 +280,21 @@ typedef void (* btrc_passthrough_cmd_callback) (int id, int key_state);
 
 typedef void (* btrc_passthrough_rsp_callback) (int id, int key_state);
 
-typedef void (* btrc_get_folder_items_callback) (btrc_browse_folderitem_t id , btrc_getfolderitem_t *param);
+typedef void (* btrc_get_folder_items_callback) (btrc_browse_folderitem_t id,
+                                                        btrc_getfolderitem_t *param);
 
 typedef void (* btrc_set_addressed_player_callback) (uint32_t player_id);
 
 typedef void (* btrc_connection_state_callback) (int state, bt_bdaddr_t *bd_addr);
+
+typedef void (* btrc_set_browsed_player_callback) (uint32_t player_id);
+
+typedef void (* btrc_change_path_callback) (uint8_t direction, uint64_t uid);
+
+typedef void (* btrc_play_item_callback) (uint8_t scope, uint64_t uid);
+
+typedef void (* btrc_get_item_attr_callback) (uint8_t scope, uint64_t uid,
+                                    uint8_t num_attr, btrc_media_attr_t *p_attrs);
 
 /** BT-RC callback structure. */
 typedef struct {
@@ -252,6 +316,10 @@ typedef struct {
     btrc_get_folder_items_callback              get_folderitems_cb;
     btrc_set_addressed_player_callback          set_addrplayer_cb;
     btrc_connection_state_callback              connection_state_cb;
+    btrc_set_browsed_player_callback            set_browsed_player_cb;
+    btrc_change_path_callback                   change_path_cb;
+    btrc_play_item_callback                     play_item_cb;
+    btrc_get_item_attr_callback                 get_item_attr_cb;
 } btrc_callbacks_t;
 
 /** Represents the standard BT-RC interface. */
@@ -324,6 +392,10 @@ typedef struct {
     bt_status_t (*get_folder_items_rsp) (btrc_folder_list_entries_t *p_param);
 
     bt_status_t (*set_addressed_player_rsp) (btrc_status_t status_code);
+    bt_status_t (*set_browsed_player_rsp) (btrc_set_browsed_player_rsp_t *p_param);
+    bt_status_t (*change_path_rsp) (uint8_t status_code, uint32_t item_count);
+    bt_status_t (*play_item_rsp) (uint8_t status_code);
+    bt_status_t (*get_item_attr_rsp)( uint8_t num_attr, btrc_element_attr_val_t *p_attrs);
 
     bt_status_t (*send_pass_through_cmd) (uint8_t key_code, uint8_t key_state);
 
