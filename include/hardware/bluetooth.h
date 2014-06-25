@@ -314,8 +314,13 @@ typedef void (*discovery_state_changed_callback)(bt_discovery_state_t state);
 /** wake state changed callback */
 typedef void (*wake_state_changed_callback)(bt_state_t state);
 /** Bluetooth Legacy PinKey Request callback */
+#ifdef QCOM_BLUETOOTH
 typedef void (*pin_request_callback)(bt_bdaddr_t *remote_bd_addr,
                                         bt_bdname_t *bd_name, uint32_t cod, uint8_t secure);
+#else
+typedef void (*pin_request_callback)(bt_bdaddr_t *remote_bd_addr,
+                                        bt_bdname_t *bd_name, uint32_t cod);
+#endif
 
 /** Bluetooth SSP Request callback - Just Works & Numeric Comparison*/
 /** pass_key - Shall be 0 for BT_SSP_PAIRING_VARIANT_CONSENT &
@@ -396,15 +401,16 @@ typedef struct {
     remote_device_properties_callback remote_device_properties_cb;
     device_found_callback device_found_cb;
     discovery_state_changed_callback discovery_state_changed_cb;
-    wake_state_changed_callback wake_state_changed_cb;
     pin_request_callback pin_request_cb;
     ssp_request_callback ssp_request_cb;
     bond_state_changed_callback bond_state_changed_cb;
     acl_state_changed_callback acl_state_changed_cb;
     callback_thread_event thread_evt_cb;
     dut_mode_recv_callback dut_mode_recv_cb;
-    hci_event_recv_callback hci_event_recv_cb;
     le_test_mode_callback le_test_mode_cb;
+#ifdef QCOM_BLUETOOTH
+    wake_state_changed_callback wake_state_changed_cb;
+    hci_event_recv_callback hci_event_recv_cb;
     le_adv_enable_callback le_adv_enable_cb;
     le_extended_scan_result_callback le_extended_scan_result_cb;
     le_lpp_write_rssi_thresh_callback          le_lpp_write_rssi_thresh_cb;
@@ -412,6 +418,7 @@ typedef struct {
     le_lpp_enable_rssi_monitor_callback        le_lpp_enable_rssi_monitor_cb;
     le_lpp_rssi_threshold_evt_callback         le_lpp_rssi_threshold_evt_cb;
     ble_conn_params_callback ble_conn_params_cb;
+#endif
 } bt_callbacks_t;
 
 /** NOTE: By default, no profiles are initialized at the time of init/enable.
