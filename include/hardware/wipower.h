@@ -106,6 +106,7 @@ typedef struct {
     int (*enable_alerts)(bool enable);
 
     int (*enable_data_notify)(bool enable);
+    int (*enable_power_apply)(bool enable, bool on, bool time_flag);
 } wipower_interface_t;
 
 
