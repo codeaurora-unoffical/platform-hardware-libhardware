@@ -1,4 +1,7 @@
 /*
+ * Copyright (C) 2013-2014, The Linux Foundation. All rights reserved.
+ * Not a Contribution.
+ *
  * Copyright (C) 2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -97,7 +100,7 @@ typedef struct {
     /**
      * Register the BtAv callbacks
      */
-    bt_status_t (*init)( btav_callbacks_t* callbacks );
+    bt_status_t (*init)( btav_callbacks_t* callbacks , int max_a2dp_connections );
 
     /** connect to headset */
     bt_status_t (*connect)( bt_bdaddr_t *bd_addr );
@@ -109,7 +112,7 @@ typedef struct {
     void  (*cleanup)( void );
 
     /** Send priority of device to stack*/
-    void (*allow_connection)( int is_valid );
+    void (*allow_connection)( int is_valid , bt_bdaddr_t *bd_addr);
 } btav_interface_t;
 
 typedef struct {
@@ -119,7 +122,7 @@ typedef struct {
     /**
      * Register the BtAv callbacks
      */
-    bt_status_t (*init)( btav_callbacks_t* callbacks );
+    bt_status_t (*init)( btav_callbacks_t* callbacks , int max_a2dp_connections );
 
     /** connect to headset */
     bt_status_t (*connect)( bt_bdaddr_t *bd_addr );
