@@ -207,18 +207,19 @@ typedef enum {
     BT_PROPERTY_REMOTE_RSSI,
 
    /**
-    * Description - Trust value of the remote device
-    * Access mode - GET and SET
-    * Data type   - boolean.
-    */
-    BT_PROPERTY_REMOTE_TRUST_VALUE,
-   /**
      * Description - Remote version info
      * Access mode - SET/GET.
      * Data type   - bt_remote_version_t.
      */
 
     BT_PROPERTY_REMOTE_VERSION_INFO,
+
+    /**
+    * Description - Trust value of the remote device
+    * Access mode - GET and SET
+    * Data type   - boolean.
+    */
+    BT_PROPERTY_REMOTE_TRUST_VALUE,
 
     BT_PROPERTY_REMOTE_DEVICE_TIMESTAMP = 0xFF,
 } bt_property_type_t;
