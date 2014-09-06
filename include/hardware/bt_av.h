@@ -58,7 +58,9 @@ typedef struct {
     size_t      size;
     btav_connection_state_callback  connection_state_cb;
     btav_audio_state_callback audio_state_cb;
+#ifdef Q_BLUETOOTH
     btav_connection_priority_callback connection_priority_cb;
+#endif
 } btav_callbacks_t;
 
 /**
