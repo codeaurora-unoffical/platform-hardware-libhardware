@@ -222,12 +222,14 @@ typedef enum {
 
     BT_PROPERTY_REMOTE_VERSION_INFO,
 
+#ifdef Q_BLUETOOTH
     /**
     * Description - Trust value of the remote device
     * Access mode - GET and SET
     * Data type   - boolean.
     */
     BT_PROPERTY_REMOTE_TRUST_VALUE,
+#endif
 
     BT_PROPERTY_REMOTE_DEVICE_TIMESTAMP = 0xFF,
 } bt_property_type_t;
