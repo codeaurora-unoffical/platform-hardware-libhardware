@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
+/*
+ *Copyright (c) 2014, The Linux Foundation. All rights reserved.
+ */
+
 #ifndef ANDROID_INCLUDE_HARDWARE_GPS_H
 #define ANDROID_INCLUDE_HARDWARE_GPS_H
 
@@ -129,38 +133,44 @@ typedef uint16_t GpsLocationFlags;
 #define ULP_CAPABILITY                  0x0000020
 /** Flags used to specify which aiding data to delete
     when calling delete_aiding_data(). */
-typedef uint32_t GpsAidingData;
+typedef uint64_t GpsAidingData;
 // IMPORTANT: Note that the following values must match
 // constants in GpsLocationProvider.java.
-#define GPS_DELETE_EPHEMERIS                     0x00000001
-#define GPS_DELETE_ALMANAC                       0x00000002
-#define GPS_DELETE_POSITION                      0x00000004
-#define GPS_DELETE_TIME                          0x00000008
-#define GPS_DELETE_IONO                          0x00000010
-#define GPS_DELETE_UTC                           0x00000020
-#define GPS_DELETE_HEALTH                        0x00000040
-#define GPS_DELETE_SVDIR                         0x00000080
-#define GPS_DELETE_SVSTEER                       0x00000100
-#define GPS_DELETE_SADATA                        0x00000200
-#define GPS_DELETE_RTI                           0x00000400
-#define GPS_DELETE_CELLDB_INFO                   0x00000800
-#define GPS_DELETE_ALMANAC_CORR                  0x00001000
-#define GPS_DELETE_FREQ_BIAS_EST                 0x00002000
-#define GLO_DELETE_EPHEMERIS                     0x00004000
-#define GLO_DELETE_ALMANAC                       0x00008000
-#define GLO_DELETE_SVDIR                         0x00010000
-#define GLO_DELETE_SVSTEER                       0x00020000
-#define GLO_DELETE_ALMANAC_CORR                  0x00040000
-#define GPS_DELETE_TIME_GPS                      0x00080000
-#define GLO_DELETE_TIME                          0x00100000
-#define BDS_DELETE_SVDIR                         0X00200000
-#define BDS_DELETE_SVSTEER                       0X00400000
-#define BDS_DELETE_TIME                          0X00800000
-#define BDS_DELETE_ALMANAC_CORR                  0X01000000
-#define BDS_DELETE_EPHEMERIS                     0X02000000
-#define BDS_DELETE_ALMANAC                       0X04000000
+#define GPS_DELETE_EPHEMERIS                     0x0000000000000001
+#define GPS_DELETE_ALMANAC                       0x0000000000000002
+#define GPS_DELETE_POSITION                      0x0000000000000004
+#define GPS_DELETE_TIME                          0x0000000000000008
+#define GPS_DELETE_IONO                          0x0000000000000010
+#define GPS_DELETE_UTC                           0x0000000000000020
+#define GPS_DELETE_HEALTH                        0x0000000000000040
+#define GPS_DELETE_SVDIR                         0x0000000000000080
+#define GPS_DELETE_SVSTEER                       0x0000000000000100
+#define GPS_DELETE_SADATA                        0x0000000000000200
+#define GPS_DELETE_RTI                           0x0000000000000400
+#define GPS_DELETE_CELLDB_INFO                   0x0000000000000800
+#define GPS_DELETE_ALMANAC_CORR                  0x0000000000001000
+#define GPS_DELETE_FREQ_BIAS_EST                 0x0000000000002000
+#define GLO_DELETE_EPHEMERIS                     0x0000000000004000
+#define GLO_DELETE_ALMANAC                       0x0000000000008000
+#define GLO_DELETE_SVDIR                         0x0000000000010000
+#define GLO_DELETE_SVSTEER                       0x0000000000020000
+#define GLO_DELETE_ALMANAC_CORR                  0x0000000000040000
+#define GPS_DELETE_TIME_GPS                      0x0000000000080000
+#define GLO_DELETE_TIME                          0x0000000000100000
+#define BDS_DELETE_SVDIR                         0X0000000000200000
+#define BDS_DELETE_SVSTEER                       0X0000000000400000
+#define BDS_DELETE_TIME                          0X0000000000800000
+#define BDS_DELETE_ALMANAC_CORR                  0X0000000001000000
+#define BDS_DELETE_EPHEMERIS                     0X0000000002000000
+#define BDS_DELETE_ALMANAC                       0X0000000004000000
+#define GAL_DELETE_SVDIR                         0X0000000080000000
+#define GAL_DELETE_SVSTEER                       0X0000000100000000
+#define GAL_DELETE_TIME                          0X0000000200000000
+#define GAL_DELETE_ALMANAC_CORR                  0X0000000400000000
+#define GAL_DELETE_EPHEMERIS                     0X0000000800000000
+#define GAL_DELETE_ALMANAC                       0X0000001000000000
 
-#define GPS_DELETE_ALL                           0xFFFFFFFF
+#define GPS_DELETE_ALL                           0xFFFFFFFFFFFFFFFF
 
 /** AGPS type */
 typedef int16_t AGpsType;
