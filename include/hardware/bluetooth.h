@@ -593,7 +593,8 @@ typedef struct {
     bt_status_t (*le_lpp_write_rssi_threshold)(const bt_bdaddr_t *remote_bda, char min, char max);
     bt_status_t (*le_lpp_enable_rssi_monitor)(const bt_bdaddr_t *remote_bda, int enable);
     bt_status_t (*le_lpp_read_rssi_threshold)(const bt_bdaddr_t *remote_bda);
-
+    int (*key_notify)(const bt_bdaddr_t *bd_addr, uint8_t notification);
+    int (*smp_pair_on_bredr)(const bt_bdaddr_t *remote_bda);
 } bt_interface_t;
 
 /** TODO: Need to add APIs for Service Discovery, Service authorization and
