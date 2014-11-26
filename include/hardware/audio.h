@@ -117,6 +117,8 @@ __BEGIN_DECLS
 /* Bluetooth SCO wideband */
 #define AUDIO_PARAMETER_KEY_BT_SCO_WB "bt_wbs"
 
+/* Device state*/
+#define AUDIO_PARAMETER_KEY_DEV_SHUTDOWN "dev_shutdown"
 
 /**
  *  audio stream parameters
