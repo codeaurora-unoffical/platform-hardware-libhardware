@@ -169,6 +169,9 @@ __BEGIN_DECLS
 /* Query if Proxy can be Opend */
 #define AUDIO_PARAMETER_KEY_CAN_OPEN_PROXY "can_open_proxy"
 
+/* Query usb headset capture capability*/
+#define AUDIO_PARAMETER_KEY_USB_CAPTURE_SUPP "usb_capture_supp"
+
 /**************************************/
 
 /* common audio stream configuration parameters
