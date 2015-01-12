@@ -25,6 +25,7 @@ typedef struct
     int  id;
     int  scn;
     int  msg_types;
+    int  l2cap_psm;
     char *p_name;
 } btmce_mas_instance_t;
 
