@@ -64,6 +64,11 @@ typedef void (* btav_audio_config_callback)(bt_bdaddr_t *bd_addr,
  */
 typedef void (* btav_connection_priority_callback)(bt_bdaddr_t *bd_addr);
 
+/** Callback for updating apps for A2dp multicast state.
+ */
+
+typedef void (* btav_is_multicast_enabled_callback)(int state);
+
 /** Callback for requesting audio focus.
  *  enable will be either TRUE or FALSE
  */
@@ -78,6 +83,7 @@ typedef struct {
     btav_audio_config_callback audio_config_cb;
     btav_connection_priority_callback connection_priority_cb;
     btav_audio_focus_request_callback audio_focus_request_cb;
+    btav_is_multicast_enabled_callback multicast_state_cb;
 } btav_callbacks_t;
 
 /**
@@ -100,7 +106,8 @@ typedef struct {
     /**
      * Register the BtAv callbacks
      */
-    bt_status_t (*init)( btav_callbacks_t* callbacks , int max_a2dp_connections );
+    bt_status_t (*init)( btav_callbacks_t* callbacks , int max_a2dp_connections,
+                        int a2dp_multicast_state);
 
     /** connect to headset */
     bt_status_t (*connect)( bt_bdaddr_t *bd_addr );
@@ -122,7 +129,8 @@ typedef struct {
     /**
      * Register the BtAv callbacks
      */
-    bt_status_t (*init)( btav_callbacks_t* callbacks , int max_a2dp_connections );
+    bt_status_t (*init)( btav_callbacks_t* callbacks , int max_a2dp_connections,
+                        int a2dp_multicast_state);
 
     /** connect to headset */
     bt_status_t (*connect)( bt_bdaddr_t *bd_addr );
