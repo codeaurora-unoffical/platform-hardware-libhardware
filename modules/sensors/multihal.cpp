@@ -35,8 +35,6 @@
 
 
 static const char* CONFIG_FILENAME = "/system/etc/sensors/hals.conf";
-static const char* LEGAL_SUBHAL_PATH_PREFIX = "/system/lib/hw/";
-static const char* LEGAL_SUBHAL_ALTERNATE_PATH_PREFIX = "/system/vendor/lib/";
 static const int MAX_CONF_LINE_LENGTH = 1024;
 
 static pthread_mutex_t init_modules_mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -447,18 +445,7 @@ static void get_so_paths(std::vector<char*> *so_paths) {
             *pch = '\0';
         }
         ALOGV("config file line #%d: '%s'", ++line_count, line);
-        char *real_path = realpath(line, NULL);
-        if (starts_with(real_path, LEGAL_SUBHAL_PATH_PREFIX) ||
-		starts_with(real_path, LEGAL_SUBHAL_ALTERNATE_PATH_PREFIX)) {
-            ALOGV("accepting valid path '%s'", real_path);
-            char* compact_line = new char[strlen(real_path) + 1];
-            strcpy(compact_line, real_path);
-            so_paths->push_back(compact_line);
-        } else {
-            ALOGW("rejecting path '%s' because it does not start with '%s' or '%s'",
-                    real_path, LEGAL_SUBHAL_PATH_PREFIX, LEGAL_SUBHAL_ALTERNATE_PATH_PREFIX);
-        }
-        free(real_path);
+        so_paths->push_back(line);
     }
     free(line);
     fclose(conf_file);
@@ -618,7 +605,7 @@ static int open_sensors(const struct hw_module_t* hw_module, const char* name,
     sensors_poll_context_t *dev = new sensors_poll_context_t();
     memset(dev, 0, sizeof(sensors_poll_device_1_t));
     dev->proxy_device.common.tag = HARDWARE_DEVICE_TAG;
-    dev->proxy_device.common.version = SENSORS_DEVICE_API_VERSION_1_1;
+    dev->proxy_device.common.version = SENSORS_DEVICE_API_VERSION_1_3;
     dev->proxy_device.common.module = const_cast<hw_module_t*>(hw_module);
     dev->proxy_device.common.close = device__close;
     dev->proxy_device.activate = device__activate;
