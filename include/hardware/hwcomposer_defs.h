@@ -125,7 +125,7 @@ enum {
     HWC_CURSOR_OVERLAY =  5,
 
     /* this layer will be handled in the HWC, using a blit engine */
-    HWC_BLIT = 6,
+    HWC_BLIT = 0xFF,
 };
 /*
  * hwc_layer_t::blending values
