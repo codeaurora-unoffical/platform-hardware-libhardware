@@ -206,6 +206,9 @@ enum {
      * Primary panel is always considered secure
      */
     HWC_DISPLAY_SECURE                      = 6,
+
+    /* Framebuffer format*/
+    HWC_DISPLAY_FBFORMAT                    = 7,
 };
 
 /* Allowed events for hwc_methods::eventControl() */
