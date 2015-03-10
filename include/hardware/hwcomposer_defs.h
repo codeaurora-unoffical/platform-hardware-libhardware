@@ -175,6 +175,9 @@ enum {
      */
     HWC_DISPLAY_DPI_X                       = 4,
     HWC_DISPLAY_DPI_Y                       = 5,
+
+    /* Framebuffer format*/
+    HWC_DISPLAY_FBFORMAT                    = 6,
 };
 
 /* Allowed events for hwc_methods::eventControl() */
