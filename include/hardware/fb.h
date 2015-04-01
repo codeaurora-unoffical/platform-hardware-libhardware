@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2008, 2015 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,9 @@
 
 __BEGIN_DECLS
 
-#define GRALLOC_HARDWARE_FB0 "fb0"
+#define GRALLOC_HARDWARE_FB_PRIMARY   "fb_primary"
+#define GRALLOC_HARDWARE_FB_SECONDARY "fb_secondary"
+#define GRALLOC_HARDWARE_FB_TERTIARY  "fb_tertiary"
 
 /*****************************************************************************/
 
@@ -158,9 +160,9 @@ typedef struct framebuffer_device_t {
 /** convenience API for opening and closing a supported device */
 
 static inline int framebuffer_open(const struct hw_module_t* module,
-        struct framebuffer_device_t** device) {
+        const char *fb_name, struct framebuffer_device_t** device) {
     return module->methods->open(module,
-            GRALLOC_HARDWARE_FB0, (struct hw_device_t**)device);
+            fb_name, (struct hw_device_t**)device);
 }
 
 static inline int framebuffer_close(struct framebuffer_device_t* device) {
