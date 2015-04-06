@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2008, 2015 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -323,7 +323,7 @@ int fb_device_open(hw_module_t const* module, const char* name,
         hw_device_t** device)
 {
     int status = -EINVAL;
-    if (!strcmp(name, GRALLOC_HARDWARE_FB0)) {
+    if (!strcmp(name, GRALLOC_HARDWARE_FB_PRIMARY)) {
         /* initialize our state here */
         fb_context_t *dev = (fb_context_t*)malloc(sizeof(*dev));
         memset(dev, 0, sizeof(*dev));
