@@ -107,9 +107,6 @@ typedef struct {
 
     /** Closes the interface. */
     void  (*cleanup)( void );
-
-    /** Send priority of device to stack*/
-    void (*allow_connection)( int is_valid );
 } btav_interface_t;
 
 typedef struct {
