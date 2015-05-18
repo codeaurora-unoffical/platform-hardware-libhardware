@@ -304,6 +304,8 @@ typedef void (* btrc_play_item_callback) (uint8_t scope, uint64_t uid, bt_bdaddr
 typedef void (* btrc_get_item_attr_callback) (uint8_t scope, uint64_t uid,
                   uint8_t num_attr, btrc_media_attr_t *p_attrs, bt_bdaddr_t *bd_addr);
 
+typedef void (* btrc_connection_state_callback) (bool state, bt_bdaddr_t *bd_addr);
+
 typedef struct {
     /** set to sizeof(BtRcCallbacks) */
     size_t      size;
@@ -325,6 +327,7 @@ typedef struct {
     btrc_change_path_callback                   change_path_cb;
     btrc_play_item_callback                     play_item_cb;
     btrc_get_item_attr_callback                 get_item_attr_cb;
+    btrc_connection_state_callback              connection_state_cb;
 } btrc_callbacks_t;
 
 /** Represents the standard BT-RC AVRCP Target interface. */
@@ -419,8 +422,6 @@ typedef struct {
 
 
 typedef void (* btrc_passthrough_rsp_callback) (int id, int key_state);
-
-typedef void (* btrc_connection_state_callback) (bool state, bt_bdaddr_t *bd_addr);
 
 /** BT-RC Controller callback structure. */
 typedef struct {
