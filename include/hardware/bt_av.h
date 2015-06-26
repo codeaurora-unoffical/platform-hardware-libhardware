@@ -61,11 +61,6 @@ typedef void (* btav_audio_config_callback)(bt_bdaddr_t *bd_addr,
  */
 typedef void (* btav_connection_priority_callback)(bt_bdaddr_t *bd_addr);
 
-/** Callback for requesting audio focus.
- *  enable will be either TRUE or FALSE
- */
-typedef void (* btav_audio_focus_request_callback)(int enable,
-                                                bt_bdaddr_t *bd_addr);
 /** BT-AV callback structure. */
 typedef struct {
     /** set to sizeof(btav_callbacks_t) */
@@ -74,7 +69,6 @@ typedef struct {
     btav_audio_state_callback audio_state_cb;
     btav_audio_config_callback audio_config_cb;
     btav_connection_priority_callback connection_priority_cb;
-    btav_audio_focus_request_callback audio_focus_request_cb;
 } btav_callbacks_t;
 
 /**
@@ -111,34 +105,6 @@ typedef struct {
     /** Send priority of device to stack*/
     void (*allow_connection)( int is_valid );
 } btav_interface_t;
-
-typedef struct {
-
-    /** set to sizeof(btav_interface_t) */
-    size_t          size;
-    /**
-     * Register the BtAv callbacks
-     */
-    bt_status_t (*init)( btav_callbacks_t* callbacks );
-
-    /** connect to headset */
-    bt_status_t (*connect)( bt_bdaddr_t *bd_addr );
-
-    /** dis-connect from headset */
-    bt_status_t (*disconnect)( bt_bdaddr_t *bd_addr );
-
-    /** Closes the interface. */
-    void  (*cleanup)( void );
-
-    /* suspend stream for A2DP Sink */
-    void (*suspend_sink)( void );
-
-    /* resume stream for A2DP Sink */
-    void (*resume_sink)( void );
-
-    /* inform audio focus state */
-    void (*audio_focus_status)( int is_enable );
-} btav_sink_interface_t;
 
 __END_DECLS
 
