@@ -415,6 +415,7 @@ typedef struct {
     bt_status_t (*play_item_rsp) (uint8_t status_code, bt_bdaddr_t *bd_addr);
     bt_status_t (*get_item_attr_rsp)( uint8_t num_attr, btrc_element_attr_val_t *p_attrs,
             bt_bdaddr_t *bd_addr);
+    bt_status_t (*is_device_active_in_handoff) (bt_bdaddr_t *bd_addr);
 
     /** Closes the interface. */
     void  (*cleanup)( void );
