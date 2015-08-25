@@ -399,6 +399,8 @@ typedef struct {
 
 typedef void (* btrc_passthrough_rsp_callback) (int id, int key_state);
 
+typedef void (* btrc_groupnavigation_rsp_callback) (int id, int key_state);
+
 typedef void (* btrc_connection_state_callback) (bool state, bt_bdaddr_t *bd_addr);
 
 typedef void (* btrc_ctrl_getrcfeatures_callback) (bt_bdaddr_t *bd_addr, int features);
@@ -446,6 +448,7 @@ typedef struct {
     btrc_ctrl_getplaystatus_rsp_callback                       getplaystatus_rsp_cb;
     btrc_ctrl_setabsvol_cmd_callback                           setabsvol_cmd_cb;
     btrc_ctrl_registernotification_abs_vol_callback            registernotification_absvol_cb;
+    btrc_groupnavigation_rsp_callback                          groupnavigation_rsp_cb;
 } btrc_ctrl_callbacks_t;
 
 /** Represents the standard BT-RC AVRCP Controller interface. */
@@ -460,6 +463,9 @@ typedef struct {
 
     /** send pass through command to target */
     bt_status_t (*send_pass_through_cmd) ( bt_bdaddr_t *bd_addr, uint8_t key_code, uint8_t key_state );
+
+    /** send pass through command to target */
+    bt_status_t (*send_group_navigation_cmd) ( bt_bdaddr_t *bd_addr, uint8_t key_code, uint8_t key_state );
 
     /** send get_cap command to target */
     bt_status_t (*getcapabilities_cmd) (uint8_t cap_id);
