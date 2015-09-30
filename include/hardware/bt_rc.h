@@ -431,6 +431,12 @@ typedef void (* btrc_ctrl_getplaystatus_rsp_callback) (bt_bdaddr_t *bd_addr, int
 typedef void (* btrc_ctrl_setabsvol_cmd_callback) (bt_bdaddr_t *bd_addr, uint8_t abs_vol);
 
 typedef void (* btrc_ctrl_registernotification_abs_vol_callback) (bt_bdaddr_t *bd_addr);
+
+typedef void (* btrc_ctrl_getplayerappsettingtext_rsp_callback) (bt_bdaddr_t *bd_addr,
+               uint8_t* attrib_text_rsp, int rsp_len, uint8_t rsp_type);
+
+typedef void (* btrc_ctrl_getplayerappsettingvaluestext_rsp_callback) (bt_bdaddr_t *bd_addr,
+               uint8_t* attrib_values_text_rsp, int rsp_len, uint8_t rsp_type);
 /** BT-RC Controller callback structure. */
 typedef struct {
     /** set to sizeof(BtRcCallbacks) */
@@ -449,6 +455,8 @@ typedef struct {
     btrc_ctrl_setabsvol_cmd_callback                           setabsvol_cmd_cb;
     btrc_ctrl_registernotification_abs_vol_callback            registernotification_absvol_cb;
     btrc_groupnavigation_rsp_callback                          groupnavigation_rsp_cb;
+    btrc_ctrl_getplayerappsettingtext_rsp_callback             playerappsettingtext_rsp_cb;
+    btrc_ctrl_getplayerappsettingvaluestext_rsp_callback       playerappsettingvaluetext_rsp_cb;
 } btrc_ctrl_callbacks_t;
 
 /** Represents the standard BT-RC AVRCP Controller interface. */
@@ -476,6 +484,13 @@ typedef struct {
     /** send command to get supported  values of player application settings for a
      * particular attribute to  target */
     bt_status_t (*list_player_app_setting_value_cmd) (uint8_t attrib_id);
+
+    /** send command to get player attributes text to target */
+    bt_status_t (*get_player_app_setting_attr_txt_cmd) (uint8_t num_attrib, uint8_t* attrib_ids);
+
+    /** send command to get player attribute values text to target */
+    bt_status_t (*get_player_app_setting_attr_value_txt_cmd) (uint8_t num_vals,
+                              uint8_t attrib_id, uint8_t* attrib_val_ids);
 
     /** send command to get current player attributes to target */
     bt_status_t (*get_player_app_setting_cmd) (uint8_t num_attrib, uint8_t* attrib_ids);
