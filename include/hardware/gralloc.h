@@ -312,8 +312,21 @@ typedef struct gralloc_module_t {
             int l, int t, int w, int h,
             struct android_ycbcr *ycbcr, int fenceFd);
 
+    /*
+     * The (*getDisplayFbIdx) method is a helper function used to get
+     * FB index by passing in framebuffer name.
+     */
+    int (*getDisplayFbIdx)(const char *fb_name, int *fb_idx);
+
+    /*
+     * The (*framebufferOpenEx) method is used to open framebuffer device
+     * by passing in client name and FB index.
+     */
+    int (*framebufferOpenEx)(const struct hw_module_t* module,
+        const char *name, int fb_idx, struct framebuffer_device_t** device);
+
     /* reserved for future use */
-    void* reserved_proc[3];
+    void* reserved_proc[1];
 } gralloc_module_t;
 
 /*****************************************************************************/
