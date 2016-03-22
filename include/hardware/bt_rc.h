@@ -452,8 +452,8 @@ typedef void (* btrc_ctrl_playerapplicationsetting_changed_callback)(bt_bdaddr_t
 typedef void (* btrc_ctrl_track_changed_callback)(bt_bdaddr_t *bd_addr, uint8_t num_attr,
                                                      btrc_element_attr_val_t *p_attrs);
 
-typedef void (* btrc_ctrl_play_position_changed_callback)(bt_bdaddr_t *bd_addr,
-                                                              uint32_t song_len, uint32_t song_pos);
+typedef void (* btrc_ctrl_play_position_changed_callback)(bt_bdaddr_t *bd_addr, uint32_t song_len,
+                                                    uint32_t song_pos, btrc_play_status_t play_status);
 
 typedef void (* btrc_ctrl_play_status_changed_callback)(bt_bdaddr_t *bd_addr,
                                                             btrc_play_status_t play_status);
