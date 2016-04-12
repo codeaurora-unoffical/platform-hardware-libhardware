@@ -57,7 +57,8 @@ typedef void (* btav_audio_state_callback)(btav_audio_state_t state,
  */
 typedef void (* btav_audio_config_callback)(bt_bdaddr_t *bd_addr,
                                                 uint32_t sample_rate,
-                                                uint8_t channel_count);
+                                                uint8_t channel_count,
+                                                uint8_t codec_type);
 
 /*
  * Callback for audio focus request to be used only in
