@@ -41,13 +41,13 @@ typedef enum {
 /** Callback for connection state change.
  *  state will have one of the values from btav_connection_state_t
  */
-typedef void (* btav_connection_state_callback)(btav_connection_state_t state, 
+typedef void (* btav_connection_state_callback)(btav_connection_state_t state,
                                                     bt_bdaddr_t *bd_addr);
 
 /** Callback for audiopath state change.
  *  state will have one of the values from btav_audio_state_t
  */
-typedef void (* btav_audio_state_callback)(btav_audio_state_t state, 
+typedef void (* btav_audio_state_callback)(btav_audio_state_t state,
                                                bt_bdaddr_t *bd_addr);
 
 /** Callback for connection priority of device for incoming connection
@@ -77,6 +77,10 @@ typedef void (* btav_is_multicast_enabled_callback)(int state);
  */
 typedef void (* btav_audio_focus_request_callback)(bt_bdaddr_t *bd_addr);
 
+/** Callback to notify reconfig a2dp when A2dp Soft Handoff is triggered
+*/
+typedef void(* btav_reconfig_a2dp_trigger_callback)(int reason, bt_bdaddr_t *bd_addr);
+
 /** BT-AV callback structure. */
 typedef struct {
     /** set to sizeof(btav_callbacks_t) */
@@ -87,6 +91,7 @@ typedef struct {
     btav_connection_priority_callback connection_priority_cb;
     btav_is_multicast_enabled_callback multicast_state_cb;
     btav_audio_focus_request_callback audio_focus_request_cb;
+    btav_reconfig_a2dp_trigger_callback reconfig_a2dp_trigger_cb;
 } btav_callbacks_t;
 
 /** 
