@@ -3,7 +3,9 @@ AC_INIT("libhardware", "0.0.1", "")
 AM_INIT_AUTOMAKE([1.10 no-define foreign])
 AC_CONFIG_SRCDIR([hardware.c])
 AC_CONFIG_HEADERS([config.h])
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile \
+                 hardware.pc
+                 ])
 
 
 AC_PROG_CXX
