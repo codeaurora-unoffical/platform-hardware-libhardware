@@ -49,12 +49,17 @@ __BEGIN_DECLS
 /**
  * Name for the FLP location interface
  */
-#define FLP_DEBUG_INTERFACE     "flp_debug"
+#define FLP_DIAGNOSTIC_INTERFACE     "flp_diagnostic"
 
 /**
  * Name for the FLP_Geofencing interface.
  */
 #define FLP_GEOFENCING_INTERFACE   "flp_geofencing"
+
+/**
+ * Name for the FLP_device context interface.
+ */
+#define FLP_DEVICE_CONTEXT_INTERFACE   "flp_device_context"
 
 /**
  * Constants to indicate the various subsystems
@@ -65,6 +70,37 @@ __BEGIN_DECLS
 #define FLP_TECH_MASK_SENSORS   (1U<<2)
 #define FLP_TECH_MASK_CELL      (1U<<3)
 #define FLP_TECH_MASK_BLUETOOTH (1U<<4)
+
+/**
+ * Set when your implementation can produce GNNS-derived locations,
+ * for use with flp_capabilities_callback.
+ *
+ * GNNS is a required capability for a particular feature to be used
+ * (batching or geofencing).  If not supported that particular feature
+ * won't be used by the upper layer.
+ */
+#define CAPABILITY_GNSS         (1U<<0)
+/**
+ * Set when your implementation can produce WiFi-derived locations, for
+ * use with flp_capabilities_callback.
+ */
+#define CAPABILITY_WIFI         (1U<<1)
+/**
+ * Set when your implementation can produce cell-derived locations, for
+ * use with flp_capabilities_callback.
+ */
+#define CAPABILITY_CELL         (1U<<3)
+
+/**
+ * Status to return in flp_status_callback when your implementation transitions
+ * from being unsuccessful in determining location to being successful.
+ */
+#define FLP_STATUS_LOCATION_AVAILABLE         0
+/**
+ * Status to return in flp_status_callback when your implementation transitions
+ * from being successful in determining location to being unsuccessful.
+ */
+#define FLP_STATUS_LOCATION_UNAVAILABLE       1
 
 /**
  * This constant is used with the batched locations
@@ -84,6 +120,8 @@ __BEGIN_DECLS
  * fix has been obtained. This flag controls that option.
  * Its the responsibility of the upper layers (caller) to switch
  * it off, if it knows that the AP might go to sleep.
+ * When this bit is on amidst a batching session, batching should
+ * continue while location fixes are reported in real time.
  */
 #define FLP_BATCH_CALLBACK_ON_LOCATION_FIX   0x0000002
 
@@ -149,7 +187,7 @@ typedef enum {
 
 /**
  *  Callback with location information.
- *  Can only be called from a thread created by create_thread_cb.
+ *  Can only be called from a thread associated to JVM using set_thread_event_cb.
  *  Parameters:
  *     num_locations is the number of batched locations available.
  *     location is the pointer to an array of pointers to location objects.
@@ -168,10 +206,40 @@ typedef void (*flp_acquire_wakelock)();
 typedef void (*flp_release_wakelock)();
 
 /**
- * Callback for creating a thread that can call into the Java framework code.
- * This must be used to create any threads that report events up to the framework.
+ * Callback for associating a thread that can call into the Java framework code.
+ * This must be used to initialize any threads that report events up to the framework.
+ * Return value:
+ *      FLP_RESULT_SUCCESS on success.
+ *      FLP_RESULT_ERROR if the association failed in the current thread.
  */
-typedef pthread_t (*flp_create_thread)(ThreadEvent event);
+typedef int (*flp_set_thread_event)(ThreadEvent event);
+
+/**
+ * Callback for technologies supported by this implementation.
+ *
+ * Parameters: capabilities is a bitmask of FLP_CAPABILITY_* values describing
+ * which features your implementation supports.  You should support
+ * CAPABILITY_GNSS at a minimum for your implementation to be utilized.  You can
+ * return 0 in FlpGeofenceCallbacks to indicate you don't support geofencing,
+ * or 0 in FlpCallbacks to indicate you don't support location batching.
+ */
+typedef void (*flp_capabilities_callback)(int capabilities);
+
+/**
+ * Callback with status information on the ability to compute location.
+ * To avoid waking up the application processor you should only send
+ * changes in status (you shouldn't call this method twice in a row
+ * with the same status value).  As a guideline you should not call this
+ * more frequently then the requested batch period set with period_ns
+ * in FlpBatchOptions.  For example if period_ns is set to 5 minutes and
+ * the status changes many times in that interval, you should only report
+ * one status change every 5 minutes.
+ *
+ * Parameters:
+ *     status is one of FLP_STATUS_LOCATION_AVAILABLE
+ *     or FLP_STATUS_LOCATION_UNAVAILABLE.
+ */
+typedef void (*flp_status_callback)(int32_t status);
 
 /** FLP callback structure. */
 typedef struct {
@@ -180,7 +248,9 @@ typedef struct {
     flp_location_callback location_cb;
     flp_acquire_wakelock acquire_wakelock_cb;
     flp_release_wakelock release_wakelock_cb;
-    flp_create_thread create_thread_cb;
+    flp_set_thread_event set_thread_event_cb;
+    flp_capabilities_callback flp_capabilities_cb;
+    flp_status_callback flp_status_cb;
 } FlpCallbacks;
 
 
@@ -189,6 +259,8 @@ typedef struct {
     /**
      * Maximum power in mW that the underlying implementation
      * can use for this batching call.
+     * If max_power_allocation_mW is 0, only fixes that are generated
+     * at no additional cost of power shall be reported.
      */
     double max_power_allocation_mW;
 
@@ -203,7 +275,9 @@ typedef struct {
      * FLP_BATCH_CALLBACK_ON_LOCATION_FIX - If set the location
      * callback will be called every time there is a location fix.
      * Its the responsibility of the upper layers (caller) to switch
-     * it off, if it knows that the AP might go to sleep.
+     * it off, if it knows that the AP might go to sleep. When this
+     * bit is on amidst a batching session, batching should continue
+     * while location fixes are reported in real time.
      *
      * Other flags to be bitwised ORed in the future.
      */
@@ -214,6 +288,23 @@ typedef struct {
      * seconds.
      */
     int64_t period_ns;
+
+    /**
+     * The smallest displacement between reported locations in meters.
+     *
+     * If set to 0, then you should report locations at the requested
+     * interval even if the device is stationary.  If positive, you
+     * can use this parameter as a hint to save power (e.g. throttling
+     * location period if the user hasn't traveled close to the displacement
+     * threshold).  Even small positive values can be interpreted to mean
+     * that you don't have to compute location when the device is stationary.
+     *
+     * There is no need to filter location delivery based on this parameter.
+     * Locations can be delivered even if they have a displacement smaller than
+     * requested. This parameter can safely be ignored at the cost of potential
+     * power savings.
+     */
+    float smallest_displacement_meters;
 } FlpBatchOptions;
 
 #define FLP_RESULT_SUCCESS                       0
@@ -235,12 +326,17 @@ typedef struct {
 
     /**
      * Opens the interface and provides the callback routines
-     * to the implemenation of this interface.
+     * to the implementation of this interface.  Once called you should respond
+     * by calling the flp_capabilities_callback in FlpCallbacks to
+     * specify the capabilities that your implementation supports.
      */
     int (*init)(FlpCallbacks* callbacks );
 
     /**
-     * Return the batch size (in bytes) available in the hardware.
+     * Return the batch size (in number of FlpLocation objects)
+     * available in the hardware.  Note, different HW implementations
+     * may have different sample sizes.  This shall return number
+     * of samples defined in the format of FlpLocation.
      * This will be used by the upper layer, to decide on the batching
      * interval and whether the AP should be woken up or not.
      */
@@ -329,6 +425,15 @@ typedef struct {
      * Get a pointer to extension information.
      */
     const void* (*get_extension)(const char* name);
+
+    /**
+     * Retrieve all batched locations currently stored and clear the buffer.
+     * flp_location_callback MUST be called in response, even if there are
+     * no locations to flush (in which case num_locations should be 0).
+     * Subsequent calls to get_batched_location or flush_batched_locations
+     * should not return any of the locations returned in this call.
+     */
+    void (*flush_batched_locations)();
 } FlpLocationInterface;
 
 struct flp_device_t {
@@ -341,32 +446,74 @@ struct flp_device_t {
 };
 
 /**
- * FLP debug callback structure.
+ * Callback for reports diagnostic data into the Java framework code.
+*/
+typedef void (*report_data)(char* data, int length);
+
+/**
+ * FLP diagnostic callback structure.
  * Currently, not used - but this for future extension.
  */
 typedef struct {
-    /** set to sizeof(FlpDebugCallbacks) */
+    /** set to sizeof(FlpDiagnosticCallbacks) */
     size_t      size;
-    flp_create_thread create_thread_cb;
-} FlpDebugCallbacks;
 
-/** Extended interface for debug support. */
+    flp_set_thread_event set_thread_event_cb;
+
+    /** reports diagnostic data into the Java framework code */
+    report_data data_cb;
+} FlpDiagnosticCallbacks;
+
+/** Extended interface for diagnostic support. */
 typedef struct {
-    /** set to sizeof(FlpDebugInterface) */
+    /** set to sizeof(FlpDiagnosticInterface) */
     size_t          size;
 
     /**
-     * Opens the debug interface and provides the callback routines
+     * Opens the diagnostic interface and provides the callback routines
      * to the implemenation of this interface.
      */
-    void  (*init)(FlpDebugCallbacks* callbacks);
+    void  (*init)(FlpDiagnosticCallbacks* callbacks);
+
+    /**
+     * Injects diagnostic data into the FLP subsystem.
+     * Return 0 on success, -1 on error.
+     **/
+    int  (*inject_data)(char* data, int length );
+} FlpDiagnosticInterface;
+
+/**
+ * Context setting information.
+ * All these settings shall be injected to FLP HAL at FLP init time.
+ * Following that, only the changed setting need to be re-injected
+ * upon changes.
+ */
+
+#define FLP_DEVICE_CONTEXT_GPS_ENABLED                     (1U<<0)
+#define FLP_DEVICE_CONTEXT_AGPS_ENABLED                    (1U<<1)
+#define FLP_DEVICE_CONTEXT_NETWORK_POSITIONING_ENABLED     (1U<<2)
+#define FLP_DEVICE_CONTEXT_WIFI_CONNECTIVITY_ENABLED       (1U<<3)
+#define FLP_DEVICE_CONTEXT_WIFI_POSITIONING_ENABLED        (1U<<4)
+#define FLP_DEVICE_CONTEXT_HW_NETWORK_POSITIONING_ENABLED  (1U<<5)
+#define FLP_DEVICE_CONTEXT_AIRPLANE_MODE_ON                (1U<<6)
+#define FLP_DEVICE_CONTEXT_DATA_ENABLED                    (1U<<7)
+#define FLP_DEVICE_CONTEXT_ROAMING_ENABLED                 (1U<<8)
+#define FLP_DEVICE_CONTEXT_CURRENTLY_ROAMING               (1U<<9)
+#define FLP_DEVICE_CONTEXT_SENSOR_ENABLED                  (1U<<10)
+#define FLP_DEVICE_CONTEXT_BLUETOOTH_ENABLED               (1U<<11)
+#define FLP_DEVICE_CONTEXT_CHARGER_ON                      (1U<<12)
+
+/** Extended interface for device context support. */
+typedef struct {
+    /** set to sizeof(FlpDeviceContextInterface) */
+    size_t          size;
 
     /**
      * Injects debug data into the FLP subsystem.
      * Return 0 on success, -1 on error.
      **/
-    int  (*inject_debug_data)(char* data, int length );
-} FlpDebugInterface;
+    int  (*inject_device_context)(uint32_t enabledMask);
+} FlpDeviceContextInterface;
 
 
 /**
@@ -449,7 +596,7 @@ typedef struct {
  *      location    - The current location as determined by the FLP subsystem.
  *      transition  - Can be one of FLP_GEOFENCE_TRANSITION_ENTERED, FLP_GEOFENCE_TRANSITION_EXITED,
  *                    FLP_GEOFENCE_TRANSITION_UNCERTAIN.
- *      timestamp   - Timestamp when the transition was detected.
+ *      timestamp   - Timestamp when the transition was detected; -1 if not available.
  *      sources_used - Bitwise OR of FLP_TECH_MASK flags indicating which
  *                     subsystems were used.
  *
@@ -530,13 +677,16 @@ typedef void (*flp_geofence_pause_callback) (int32_t geofence_id, int32_t result
 typedef void (*flp_geofence_resume_callback) (int32_t geofence_id, int32_t result);
 
 typedef struct {
+    /** set to sizeof(FlpGeofenceCallbacks) */
+    size_t size;
     flp_geofence_transition_callback geofence_transition_callback;
     flp_geofence_monitor_status_callback geofence_status_callback;
     flp_geofence_add_callback geofence_add_callback;
     flp_geofence_remove_callback geofence_remove_callback;
     flp_geofence_pause_callback geofence_pause_callback;
     flp_geofence_resume_callback geofence_resume_callback;
-    flp_create_thread create_thread_cb;
+    flp_set_thread_event set_thread_event_cb;
+    flp_capabilities_callback flp_capabilities_cb;
 } FlpGeofenceCallbacks;
 
 
@@ -617,7 +767,9 @@ typedef struct {
 
    /**
     * Opens the geofence interface and provides the callback routines
-    * to the implemenation of this interface.
+    * to the implemenation of this interface.  Once called you should respond
+    * by calling the flp_capabilities_callback in FlpGeofenceCallbacks to
+    * specify the capabilities that your implementation supports.
     */
    void  (*init)( FlpGeofenceCallbacks* callbacks );
 
@@ -647,6 +799,15 @@ typedef struct {
     *       add_geofence_area call.
     */
    void (*resume_geofence) (int32_t geofence_id, int monitor_transitions);
+
+   /**
+    * Modify a particular geofence option.
+    * Parameters:
+    *    geofence_id - The id for the geofence.
+    *    options - Various options associated with the geofence. See
+    *        GeofenceOptions structure for details.
+    */
+   void (*modify_geofence_option) (int32_t geofence_id, GeofenceOptions* options);
 
    /**
     * Remove a list of geofences. After the function returns, no notifications
