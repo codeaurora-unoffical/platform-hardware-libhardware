@@ -22,7 +22,11 @@
 #include <stdint.h>
 #include <sys/time.h>
 
+#ifdef _ANDROID_
 #include <cutils/log.h>
+#else
+#include <log/log.h>
+#endif
 
 #include <hardware/hardware.h>
 #include <system/audio.h>

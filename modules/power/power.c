@@ -20,7 +20,11 @@
 #include <fcntl.h>
 
 #define LOG_TAG "Legacy PowerHAL"
+#ifdef _ANDROID_
 #include <utils/Log.h>
+#else
+#include <log/log.h>
+#endif
 
 #include <hardware/hardware.h>
 #include <hardware/power.h>

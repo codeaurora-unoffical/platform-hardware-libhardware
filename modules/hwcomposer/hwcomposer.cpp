@@ -19,7 +19,11 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#ifdef _ANDROID_
 #include <cutils/log.h>
+#else
+#include <log/log.h>
+#endif
 #include <cutils/atomic.h>
 
 #include <hardware/hwcomposer.h>

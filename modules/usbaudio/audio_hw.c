@@ -23,7 +23,11 @@
 #include <sys/time.h>
 #include <stdlib.h>
 
+#ifdef _ANDROID_
 #include <cutils/log.h>
+#else
+#include <log/log.h>
+#endif
 #include <cutils/str_parms.h>
 #include <cutils/properties.h>
 

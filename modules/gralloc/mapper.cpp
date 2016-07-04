@@ -24,7 +24,11 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#ifdef _ANDROID_
 #include <cutils/log.h>
+#else
+#include <log/log.h>
+#endif
 #include <cutils/atomic.h>
 
 #include <hardware/hardware.h>

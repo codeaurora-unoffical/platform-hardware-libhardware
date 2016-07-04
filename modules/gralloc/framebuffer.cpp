@@ -19,8 +19,11 @@
 #include <dlfcn.h>
 
 #include <cutils/ashmem.h>
+#ifdef _ANDROID_
 #include <cutils/log.h>
-
+#else
+#include <log/log.h>
+#endif
 #include <hardware/hardware.h>
 #include <hardware/gralloc.h>
 
@@ -30,7 +33,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <cutils/log.h>
 #include <cutils/atomic.h>
 
 #if HAVE_ANDROID_OS

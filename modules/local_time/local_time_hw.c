@@ -22,7 +22,11 @@
 #include <sys/time.h>
 #include <linux/time.h>
 
+#ifdef _ANDROID_
 #include <cutils/log.h>
+#else
+#include <log/log.h>
+#endif
 
 #include <hardware/hardware.h>
 #include <hardware/local_time_hal.h>
