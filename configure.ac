@@ -4,6 +4,7 @@ AM_INIT_AUTOMAKE([1.10 no-define foreign])
 AC_CONFIG_SRCDIR([hardware.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile \
+                 include/Makefile \
                  hardware.pc
                  ])
 
