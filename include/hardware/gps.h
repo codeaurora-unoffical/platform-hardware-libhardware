@@ -38,7 +38,7 @@ __BEGIN_DECLS
 typedef int64_t GpsUtcTime;
 
 /** Maximum number of SVs for gps_sv_status_callback(). */
-#define GPS_MAX_SVS 32
+#define GPS_MAX_SVS 50
 
 /** Maximum number of Measurements in gps_measurement_callback(). */
 #define GPS_MAX_MEASUREMENT   32
@@ -493,10 +493,29 @@ typedef struct {
     uint32_t    almanac_mask;
 
     /**
-     * Represents a bit mask indicating which SVs
+     * Represents a bit mask indicating which GPS SVs
      * were used for computing the most recent position fix.
      */
     uint32_t    used_in_fix_mask;
+
+    /**
+     * Represents a bit mask indicating which GLONASS SVs
+     * were used for computing the most recent position fix.
+     */
+    uint32_t    glo_used_in_fix_mask;
+
+    /**
+     * Represents a bit mask indicating which BDS SVs
+     * were used for computing the most recent position fix.
+     */
+    uint64_t    bds_used_in_fix_mask;
+
+    /**
+     * Represents a bit mask indicating which GALILEO SVs
+     * were used for computing the most recent position fix.
+     */
+    uint64_t    gal_used_in_fix_mask;
+
 } GpsSvStatus;
 
 
