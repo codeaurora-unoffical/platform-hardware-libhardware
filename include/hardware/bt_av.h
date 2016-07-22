@@ -126,6 +126,9 @@ typedef struct {
 
     /** Sends Audio Focus State. */
     void  (*audio_focus_state)( int focus_state );
+
+    /** Request PCM sample. */
+    uint32_t  (*get_pcm_data)( uint8_t* data, uint32_t size );
 } btav_interface_t;
 
 __END_DECLS
