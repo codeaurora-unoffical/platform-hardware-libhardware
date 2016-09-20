@@ -31,6 +31,7 @@
 #ifdef LINUX_ENABLED
 #define HAL_LIBRARY_PATH1 "/usr/lib"
 #define HAL_LIBRARY_PATH2 "/usr/lib64"
+#define HAL_LIBRARY_SUBDIR "hw"
 #else
 #if defined(__LP64__)
 #define HAL_LIBRARY_PATH1 "/system/lib64/hw"
@@ -139,8 +140,18 @@ static int hw_module_exists(char *path, size_t path_len, const char *name,
     if (access(path, R_OK) == 0)
         return 0;
 
+    snprintf(path, path_len, "%s/%s/%s.%s.so",
+             HAL_LIBRARY_PATH2, HAL_LIBRARY_SUBDIR, name, subname);
+    if (access(path, R_OK) == 0)
+       return 0;
+
     snprintf(path, path_len, "%s/%s.%s.so",
              HAL_LIBRARY_PATH1, name, subname);
+    if (access(path, R_OK) == 0)
+        return 0;
+
+    snprintf(path, path_len, "%s/%s/%s.%s.so",
+             HAL_LIBRARY_PATH1, HAL_LIBRARY_SUBDIR, name, subname);
     if (access(path, R_OK) == 0)
         return 0;
 
