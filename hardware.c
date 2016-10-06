@@ -28,14 +28,18 @@
 #include <utils/Log.h>
 
 /** Base path of the hal modules */
-#ifdef LINUX_ENABLED
-#define HAL_LIBRARY_PATH1 "/usr/lib"
-#define HAL_LIBRARY_PATH2 "/usr/lib64"
-#define HAL_LIBRARY_SUBDIR "hw"
-#else
 #if defined(__LP64__)
+#ifdef LINUX_ENABLED
+#define HAL_LIBRARY_PATH1 "/usr/lib64"
+#define HAL_LIBRARY_PATH2 "/usr/lib64/hw"
+#else
 #define HAL_LIBRARY_PATH1 "/system/lib64/hw"
 #define HAL_LIBRARY_PATH2 "/vendor/lib64/hw"
+#endif
+#else
+#ifdef LINUX_ENABLED
+#define HAL_LIBRARY_PATH1 "/usr/lib"
+#define HAL_LIBRARY_PATH2 "/usr/lib/hw"
 #else
 #define HAL_LIBRARY_PATH1 "/system/lib/hw"
 #define HAL_LIBRARY_PATH2 "/vendor/lib/hw"
@@ -140,18 +144,8 @@ static int hw_module_exists(char *path, size_t path_len, const char *name,
     if (access(path, R_OK) == 0)
         return 0;
 
-    snprintf(path, path_len, "%s/%s/%s.%s.so",
-             HAL_LIBRARY_PATH2, HAL_LIBRARY_SUBDIR, name, subname);
-    if (access(path, R_OK) == 0)
-       return 0;
-
     snprintf(path, path_len, "%s/%s.%s.so",
              HAL_LIBRARY_PATH1, name, subname);
-    if (access(path, R_OK) == 0)
-        return 0;
-
-    snprintf(path, path_len, "%s/%s/%s.%s.so",
-             HAL_LIBRARY_PATH1, HAL_LIBRARY_SUBDIR, name, subname);
     if (access(path, R_OK) == 0)
         return 0;
 
