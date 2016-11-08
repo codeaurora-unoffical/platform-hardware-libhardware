@@ -107,6 +107,14 @@ struct sound_trigger_hw_device {
      */
     int (*stop_recognition)(const struct sound_trigger_hw_device *dev,
                            sound_model_handle_t sound_model_handle);
+
+    /* set parameters on a given model.
+     * The function accepts a list of
+     * parameter key value pairs in the form: key1=value1;key2=value2;...
+     */
+    int (*set_parameters)(const struct sound_trigger_hw_device *dev,
+                           sound_model_handle_t sound_model_handle,
+                           const char *kv_pairs);
 };
 
 typedef struct sound_trigger_hw_device sound_trigger_hw_device_t;
