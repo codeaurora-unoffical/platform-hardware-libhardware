@@ -841,7 +841,8 @@ typedef struct effect_param_s {
     char        data[];     // Start of Parameter + Value data
 } effect_param_t;
 
-
+// Maximum effect_param_t size
+#define EFFECT_PARAM_SIZE_MAX       65536
 
 /////////////////////////////////////////////////
 //      Effect library interface
