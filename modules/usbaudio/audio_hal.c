@@ -417,7 +417,10 @@ static ssize_t out_write(struct audio_stream_out *stream, const void* buffer, si
     }
 
     if (write_buff != NULL && num_write_buff_bytes != 0) {
-        proxy_write(&out->proxy, write_buff, num_write_buff_bytes);
+        if (proxy_write(&out->proxy, write_buff, num_write_buff_bytes)) {
+            bytes = -1;
+            ALOGE("%s: proxy_write failed:\n", __func__);
+        }
     }
 
     pthread_mutex_unlock(&out->lock);
@@ -522,7 +525,10 @@ static int adev_open_output_stream(struct audio_hw_device *dev,
     /* Pull out the card/device pair */
     parse_card_device_params(address, &(out->profile->card), &(out->profile->device));
 
-    profile_read_device_info(out->profile);
+    if (profile_read_device_info(out->profile) == false) {
+        ALOGE("%s: profile_read_device_info failed:\n" ,__func__);
+        goto err_open;
+    }
 
     pthread_mutex_unlock(&adev->lock);
 
