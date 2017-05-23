@@ -223,9 +223,19 @@ typedef struct {
      */
     bt_status_t (*search_service)(int conn_id, bt_uuid_t *filter_uuid );
 
+    /**
+     * Sead "Find service by UUID" request. Used only for PTS tests.
+     */
+    void (*btif_gattc_discover_service_by_uuid)(int conn_id, bt_uuid_t *uuid);
+
     /** Read a characteristic on a remote device */
-    bt_status_t (*read_characteristic)( int conn_id, uint16_t handle,
-                    int auth_req );
+    bt_status_t (*read_characteristic)(int conn_id, uint16_t handle,
+                                       int auth_req);
+
+    /** Read a characteristic on a remote device */
+    bt_status_t (*read_using_characteristic_uuid)(
+        int conn_id, bt_uuid_t *uuid, uint16_t s_handle,
+        uint16_t e_handle, int auth_req);
 
     /** Write a remote characteristic */
     bt_status_t (*write_characteristic)(int conn_id, uint16_t handle,
