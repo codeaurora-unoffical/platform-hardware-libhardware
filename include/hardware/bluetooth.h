@@ -35,7 +35,7 @@ __BEGIN_DECLS
 #define BT_STACK_TEST_MODULE_ID "bluetooth_test"
 
 
-/* Bluetooth profile interface IDs */
+/** Bluetooth profile interface IDs */
 
 #define BT_PROFILE_HANDSFREE_ID "handsfree"
 #define BT_PROFILE_HANDSFREE_CLIENT_ID "handsfree_client"
@@ -51,6 +51,9 @@ __BEGIN_DECLS
 #define BT_PROFILE_GATT_ID "gatt"
 #define BT_PROFILE_AV_RC_ID "avrcp"
 #define BT_PROFILE_AV_RC_CTRL_ID "avrcp_ctrl"
+
+/** Bluetooth test interface IDs */
+#define BT_TEST_INTERFACE_MCAP_ID "mcap_test"
 
 /** Bluetooth Address */
 typedef struct {
@@ -559,9 +562,6 @@ typedef struct {
     /** BLE Test Mode APIs */
     /* opcode MUST be one of: LE_Receiver_Test, LE_Transmitter_Test, LE_Test_End */
     int (*le_test_mode)(uint16_t opcode, uint8_t *buf, uint8_t len);
-
-    /* enable or disable bluetooth HCI snoop log */
-    int (*config_hci_snoop_log)(uint8_t enable);
 
     /** Sets the OS call-out functions that bluedroid needs for alarms and wake locks.
       * This should be called immediately after a successful |init|.
