@@ -386,7 +386,7 @@ typedef void (* btrc_add_to_now_playing_callback) (uint8_t scope,
                 uint8_t* uid, uint16_t  uid_counter, RawAddress *bd_addr);
 
 typedef void (* btrc_connection_state_callback) (
-    bool rc_connect, bool bt_connect, bt_bdaddr_t *bd_addr);
+    bool rc_connect, bool bt_connect, RawAddress *bd_addr);
 
 /** BT-RC Target callback structure. */
 typedef struct {
@@ -479,7 +479,7 @@ typedef struct {
     bt_status_t (*register_notification_rsp)(btrc_event_id_t event_id,
                                              btrc_notification_type_t type,
                                              btrc_register_notification_t *p_param,
-                                             bt_bdaddr_t *bd_addr);
+                                             RawAddress *bd_addr);
 
     /* AVRCP 1.4 enhancements */
 
@@ -526,7 +526,7 @@ typedef struct {
     /* add_to_now playing list response from TG to CT */
     bt_status_t (*add_to_now_playing_rsp)(RawAddress *bd_addr, btrc_status_t rsp_status);
 
-    bt_status_t (*is_device_active_in_handoff) (bt_bdaddr_t *bd_addr);
+    bt_status_t (*is_device_active_in_handoff) (RawAddress *bd_addr);
 
     /** Closes the interface. */
     void  (*cleanup)( void );
@@ -535,9 +535,6 @@ typedef struct {
 typedef void (* btrc_passthrough_rsp_callback) (RawAddress *bd_addr, int id, int key_state);
 
 typedef void (* btrc_groupnavigation_rsp_callback) (int id, int key_state);
-
-typedef void (* btrc_connection_state_callback) (
-    bool rc_connect, bool bt_connect, RawAddress *bd_addr);
 
 typedef void (* btrc_ctrl_getrcfeatures_callback) (RawAddress *bd_addr, int features);
 

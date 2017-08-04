@@ -171,12 +171,6 @@ typedef struct {
     /** Set the HID Idle Time */
     bt_status_t (*set_idle_time)(RawAddress *bd_addr, uint8_t idleTime);
 
-    /** Get the HID Idle Time */
-    bt_status_t (*get_idle_time)(bt_bdaddr_t *bd_addr);
-
-    /** Set the HID Idle Time */
-    bt_status_t (*set_idle_time)(bt_bdaddr_t *bd_addr, uint8_t idleTime);
-
     /** Send a GET_REPORT to HID device. */
     bt_status_t (*get_report)(RawAddress *bd_addr, bthh_report_type_t reportType, uint8_t reportId, int bufferSize);
 
