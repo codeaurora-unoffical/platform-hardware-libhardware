@@ -528,6 +528,7 @@ typedef struct {
 
     bt_status_t (*is_device_active_in_handoff) (RawAddress *bd_addr);
 
+    bt_status_t (*update_play_status_to_stack) (btrc_play_status_t play_status);
     /** Closes the interface. */
     void  (*cleanup)( void );
 } btrc_interface_t;
