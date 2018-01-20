@@ -50,6 +50,7 @@ typedef enum {
      * the device may return -1 instead */
     HWC2_ATTRIBUTE_DPI_X = 4,
     HWC2_ATTRIBUTE_DPI_Y = 5,
+    HWC2_ATTRIBUTE_FBFORMAT = 6,
 } hwc2_attribute_t;
 
 /* Blend modes, settable per layer */
@@ -325,6 +326,7 @@ static inline const char* getAttributeName(hwc2_attribute_t attribute) {
         case HWC2_ATTRIBUTE_VSYNC_PERIOD: return "VsyncPeriod";
         case HWC2_ATTRIBUTE_DPI_X: return "DpiX";
         case HWC2_ATTRIBUTE_DPI_Y: return "DpiY";
+        case HWC2_ATTRIBUTE_FBFORMAT: return "FbFormat";
         default: return "Unknown";
     }
 }
@@ -551,6 +553,7 @@ enum class Attribute : int32_t {
     VsyncPeriod = HWC2_ATTRIBUTE_VSYNC_PERIOD,
     DpiX = HWC2_ATTRIBUTE_DPI_X,
     DpiY = HWC2_ATTRIBUTE_DPI_Y,
+    FbFormat = HWC2_ATTRIBUTE_FBFORMAT,
 };
 TO_STRING(hwc2_attribute_t, Attribute, getAttributeName)
 
