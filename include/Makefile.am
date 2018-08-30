@@ -5,7 +5,8 @@ EXTRA_DIST = $(pkgconfig_DATA)
 h_sources = hardware/audio.h \
             hardware/hardware.h \
             hardware/audio_effect.h \
-            hardware/sound_trigger.h
+            hardware/sound_trigger.h \
+            hardware/gralloc1.h
 
 library_includedir = $(includedir)/hardware/
 library_include_HEADERS = $(h_sources)
