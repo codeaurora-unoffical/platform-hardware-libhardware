@@ -187,6 +187,18 @@ enum {
 };
 typedef uint32_t tv_input_event_type_t;
 
+typedef enum {
+    TV_INPUT_PARAM_TYPE_BYTE = 0,
+    TV_INPUT_PARAM_TYPE_INT = 1,
+    TV_INPUT_PARAM_TYPE_FLOAT = 2,
+} tv_input_param_type_t;
+
+typedef union tv_input_param_val {
+    int8_t    byteval;
+    int32_t   intval;
+    float     floatval;
+} tv_input_param_val_t;
+
 typedef struct tv_input_capture_result {
     /* Device ID */
     int device_id;
@@ -396,6 +408,26 @@ typedef struct tv_input_device {
      */
     int (*cancel_capture)(struct tv_input_device* dev, int device_id,
             int stream_id, uint32_t seq);
+    /*
+     * set_stream_param:
+     *
+     * Set a stream parameter to a specified value.
+     *
+     * Return 0 on success; -ENOENT if the stream is not open; -EINVAL if
+     * device_id, stream_id, and/or parameter is invalid.
+     */
+    int (*set_stream_param)(struct tv_input_device* dev, int device_id,
+            int stream_id, int param_name, tv_input_param_type_t param_type,
+            tv_input_param_val_t param_value);
+    /*
+     * get_stream_param:
+     *
+     * Get the value of a particular stream parameter.
+     *
+     * Return tv_input_param_val_t.
+     */
+    tv_input_param_val_t (*get_stream_param)(struct tv_input_device* dev, int device_id,
+            int stream_id, int param_name, tv_input_param_type_t param_type);
 
     void* reserved[16];
 } tv_input_device_t;
