@@ -40,6 +40,8 @@ if HAS_SENSORS
 h_sources += $(top_srcdir)/include/hardware/sensors.h
 endif
 
+h_sources += $(top_srcdir)/include/hardware/boot_control.h
+
 gralloc_h_sources = modules/gralloc/gralloc_priv.h
 
 libhardware_includedir=$(includedir)/hardware/
