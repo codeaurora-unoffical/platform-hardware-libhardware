@@ -186,6 +186,18 @@ typedef struct camera_device_ops {
     int (*store_meta_data_in_buffers)(struct camera_device *, int enable);
 
     /**
+     * Release a preview frame previously returned by CAMERA_MSG_PREVIEW_FRAME.
+     *
+     * It is camera HAL client's responsibility to release preview
+     * frames sent out by the camera HAL before the camera HAL receives a call
+     * to disableMsgType(CAMERA_MSG_PREVIEW_FRAME). After it receives the call
+     * to disableMsgType(CAMERA_MSG_PREVIEW_FRAME), it is the camera HAL's
+     * responsibility to manage the life-cycle of the preview frames.
+     */
+     void (*release_preview_frame)(struct camera_device *,
+                const void *opaque);
+
+    /**
      * Start record mode. When a record image is available, a
      * CAMERA_MSG_VIDEO_FRAME message is sent with the corresponding
      * frame. Every record frame must be released by a camera HAL client via
