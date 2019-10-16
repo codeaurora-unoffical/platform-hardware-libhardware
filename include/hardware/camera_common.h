@@ -26,7 +26,7 @@
 #include <system/camera.h>
 #include <system/camera_vendor_tags.h>
 #include <hardware/hardware.h>
-#ifdef __LIBGBM__
+#ifdef USE_GBM
 #include <gbm.h>
 #include <gbm_priv.h>
 typedef const struct gbm_bo* buffer_handle_t;
