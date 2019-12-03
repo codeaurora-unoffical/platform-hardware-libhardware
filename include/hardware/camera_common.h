@@ -23,11 +23,17 @@
 #include <stdbool.h>
 #include <sys/cdefs.h>
 #include <sys/types.h>
-#include <cutils/native_handle.h>
 #include <system/camera.h>
 #include <system/camera_vendor_tags.h>
 #include <hardware/hardware.h>
+#ifdef USE_GBM
+#include <gbm.h>
+#include <gbm_priv.h>
+typedef const struct gbm_bo* buffer_handle_t;
+#else
 #include <hardware/gralloc.h>
+#include <cutils/native_handle.h>
+#endif
 
 __BEGIN_DECLS
 
