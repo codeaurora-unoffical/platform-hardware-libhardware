@@ -258,6 +258,19 @@ typedef struct camera_device_ops {
     int (*cancel_picture)(struct camera_device *);
 
     /**
+     * Release a snapshot frame previously returned by CAMERA_MSG_COMPRESSED_IMAGE.
+     *
+     * It is camera HAL client's responsibility to release snapshot recording
+     * frames sent out by the camera HAL before the camera HAL receives a call
+     * to disableMsgType(CAMERA_MSG_COMPRESSED_IMAGE.). After it receives the
+     * call to disableMsgType(CAMERA_MSG_COMPRESSED_IMAGE.), it is the camera
+     * HAL's responsibility to manage the life-cycle of the video recording
+     * frames.
+     */
+    void (*release_snapshot_frame)(struct camera_device *,
+                    const void *opaque);
+
+    /**
      * Set the camera parameters. This returns BAD_VALUE if any parameter is
      * invalid or not supported.
      */
