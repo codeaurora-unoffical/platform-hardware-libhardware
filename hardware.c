@@ -28,22 +28,16 @@
 #include <utils/Log.h>
 
 /** Base path of the hal modules */
-#if defined(__LP64__)
-#ifdef LINUX_ENABLED
-#define HAL_LIBRARY_PATH1 "/usr/lib64"
-#define HAL_LIBRARY_PATH2 "/usr/lib64/hw"
-#else
+#ifdef HAL_LIBRARY_PATH
+#define HAL_PATH_APPEND(path, extn) (path extn)
+#define HAL_LIBRARY_PATH1 HAL_LIBRARY_PATH
+#define HAL_LIBRARY_PATH2 HAL_PATH_APPEND(HAL_LIBRARY_PATH1, "/hw")
+#elif defined(__LP64__)
 #define HAL_LIBRARY_PATH1 "/system/lib64/hw"
 #define HAL_LIBRARY_PATH2 "/vendor/lib64/hw"
-#endif
-#else
-#ifdef LINUX_ENABLED
-#define HAL_LIBRARY_PATH1 "/usr/lib"
-#define HAL_LIBRARY_PATH2 "/usr/lib/hw"
 #else
 #define HAL_LIBRARY_PATH1 "/system/lib/hw"
 #define HAL_LIBRARY_PATH2 "/vendor/lib/hw"
-#endif
 #endif
 
 /**

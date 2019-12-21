@@ -2,7 +2,10 @@
 lib_LTLIBRARIES = libhardware.la
 
 libhardware_la_SOURCES = hardware.c
-libhardware_la_CFLAGS = -I$(top_srcdir)/include -DLINUX_ENABLED
+libhardware_la_CFLAGS  = -I$(top_srcdir)/include
+if HAL_PATH_SPECIFIED
+libhardware_la_CFLAGS += -DHAL_LIBRARY_PATH=\"@HAL_PATH@\"
+endif
 libhardware_la_LDFLAGS = -lcutils -llog -ldl
 
 # Export headers
