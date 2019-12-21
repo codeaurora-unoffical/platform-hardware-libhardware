@@ -10,6 +10,12 @@ h_sources  = $(top_srcdir)/include/hardware/hardware.h
 h_sources += $(top_srcdir)/include/hardware/power.h
 h_sources += $(top_srcdir)/include/hardware/qemu_pipe.h
 
+if HAL_PATH_SPECIFIED
+libhardware_la_CFLAGS += -DHAL_PATH_SPECIFIED
+libhardware_la_CFLAGS += -DHAL_LIBRARY_PATH1=\"@HAL_PATH@\"
+libhardware_la_CFLAGS += -DHAL_LIBRARY_PATH2=\"@HAL_PATH@/hw\"
+endif
+
 if HAS_AUDIO
 h_sources += $(top_srcdir)/include/hardware/audio.h
 h_sources += $(top_srcdir)/include/hardware/sound_trigger.h

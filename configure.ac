@@ -39,6 +39,14 @@ AC_ARG_ENABLE(audio,
 
 AM_CONDITIONAL(HAS_AUDIO, [test "x${has_audio}" = "xyes"])
 
+AC_ARG_WITH(hal-path,
+        AS_HELP_STRING([--with-hal-path=DIR], [Specify the HAL modules location in run time]),
+        [HAL_PATH="$withval"],
+        [HAL_PATH="no"])
+
+AM_CONDITIONAL(HAL_PATH_SPECIFIED, [test "x${HAL_PATH}" != "xno"])
+AC_SUBST(HAL_PATH)
+
 AC_ARG_ENABLE(camera,
       AC_HELP_STRING([--disable-camera], [Disable camera header installation]),
         [has_camera=${enableval}], [has_camera="no"])
