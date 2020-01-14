@@ -27,6 +27,7 @@ endif
 if HAS_DISPLAY
 h_sources += $(top_srcdir)/include/hardware/hwcomposer.h
 h_sources += $(top_srcdir)/include/hardware/hwcomposer_defs.h
+h_sources += $(top_srcdir)/include/hardware/gralloc1.h
 h_sources += $(top_srcdir)/include/hardware/gralloc.h
 h_sources += $(top_srcdir)/include/hardware/fb.h
 endif
