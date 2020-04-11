@@ -11,11 +11,19 @@ h_sources += $(top_srcdir)/include/hardware/power.h
 h_sources += $(top_srcdir)/include/hardware/qemu_pipe.h
 
 if HAS_AUDIO
+if ANDROID_Q_AUDIO_SUPPORT
+h_sources += $(top_srcdir)/include/hardware/audio_android_q/audio.h
+h_sources += $(top_srcdir)/include/hardware/audio_android_q/sound_trigger.h
+h_sources += $(top_srcdir)/include/hardware/audio_android_q/audio_alsaops.h
+h_sources += $(top_srcdir)/include/hardware/audio_android_q/audio_effect.h
+h_sources += $(top_srcdir)/include/hardware/audio_android_q/audio_policy.h
+else
 h_sources += $(top_srcdir)/include/hardware/audio.h
 h_sources += $(top_srcdir)/include/hardware/sound_trigger.h
 h_sources += $(top_srcdir)/include/hardware/audio_alsaops.h
 h_sources += $(top_srcdir)/include/hardware/audio_effect.h
 h_sources += $(top_srcdir)/include/hardware/audio_policy.h
+endif
 endif
 
 if HAS_CAMERA

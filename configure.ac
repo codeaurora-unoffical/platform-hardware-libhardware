@@ -63,4 +63,6 @@ AC_ARG_ENABLE(sensors,
 
 AM_CONDITIONAL(HAS_SENSORS, [test "x${has_sensors}" = "xyes"])
 
+AM_CONDITIONAL([ANDROID_Q_AUDIO_SUPPORT], [test x$BOARD_SUPPORTS_ANDROID_Q_AUDIO = xtrue])
+
 AC_OUTPUT
