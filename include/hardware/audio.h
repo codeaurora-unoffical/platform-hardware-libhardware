@@ -642,6 +642,14 @@ static inline size_t audio_stream_in_frame_size(const struct audio_stream_in *s)
     return sizeof(int8_t);
 }
 
+/* Callback function used for sending event notifications to client
+ * status
+ *    1-SSR in progress, 0-SSR successfully recovered
+ * priv
+ *    handle to private data.
+ */
+typedef void (*ssr_callback_t)(uint16_t status, void *priv);
+
 /**********************************************************************/
 
 /**
@@ -851,6 +859,9 @@ struct audio_hw_device {
     int (*listen_set_parameters)(struct audio_hw_device *dev,
                                  const char *kv_pairs);
 #endif
+    int (*set_ssr_callback)(struct audio_hw_device *dev,
+                            ssr_callback_t cb_func,
+                            void *priv);
 };
 typedef struct audio_hw_device audio_hw_device_t;
 
