@@ -300,6 +300,13 @@ struct audio_stream_out {
     int (*set_volume)(struct audio_stream_out *stream, float left, float right);
 
     /**
+     * Use this method in situations where audio mixing is done in the
+     * hardware. This method serves as a direct interface with hardware,
+     * allowing you to directly get the volume as apposed to via the framework.
+     */
+    int (*get_volume)(struct audio_stream_out *stream, float *left, float *right);
+
+    /**
      * Write audio buffer to driver. Returns number of bytes written, or a
      * negative status_t. If at least one frame was written successfully prior to the error,
      * it is suggested that the driver return that successful (short) byte count
